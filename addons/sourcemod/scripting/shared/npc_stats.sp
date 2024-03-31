@@ -2244,10 +2244,11 @@ methodmap CClotBody < CBaseCombatCharacter
 			skin,
 			model_size);
 		}
+
 		if(GetTeam(this.index) != TFTeam_Red)
 			DispatchKeyValue(item, "model", "models/empty.mdl");
 		else
-			DispatchKeyValue(this.index, "model", model);
+			DispatchKeyValue(item, "model", model);
 
 		if(model_size == 1.0)
 		{
