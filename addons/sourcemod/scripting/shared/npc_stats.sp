@@ -2244,7 +2244,7 @@ methodmap CClotBody < CBaseCombatCharacter
 			skin,
 			model_size);
 		}
-		if(GetTeam(entity) != TFTeam_Red)
+		if(GetTeam(this.index) != TFTeam_Red)
 			DispatchKeyValue(item, "model", "models/empty.mdl");
 		else
 			DispatchKeyValue(this.index, "model", model);
