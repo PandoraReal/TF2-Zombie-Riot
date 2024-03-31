@@ -7862,7 +7862,7 @@ public void ArrowStartTouch(int arrow, int entity)
 		EmitSoundToAll(g_ArrowHitSoundSuccess[GetRandomInt(0, sizeof(g_ArrowHitSoundSuccess) - 1)], arrow, _, 80, _, 0.8, 100);
 		if(IsValidEntity(arrow_particle))
 		{
-			DispatchKeyValue(arrow_particle, "parentname", "none");
+		//	DispatchKeyValue(arrow_particle, "parentname", "none");
 			AcceptEntityInput(arrow_particle, "ClearParent");
 			float f3_PositionTemp[3];
 			GetEntPropVector(arrow_particle, Prop_Data, "m_vecAbsOrigin", f3_PositionTemp);
@@ -7876,7 +7876,7 @@ public void ArrowStartTouch(int arrow, int entity)
 		EmitSoundToAll(g_ArrowHitSoundMiss[GetRandomInt(0, sizeof(g_ArrowHitSoundMiss) - 1)], arrow, _, 80, _, 0.8, 100);
 		if(IsValidEntity(arrow_particle))
 		{
-			DispatchKeyValue(arrow_particle, "parentname", "none");
+		//	DispatchKeyValue(arrow_particle, "parentname", "none");
 			AcceptEntityInput(arrow_particle, "ClearParent");
 			float f3_PositionTemp[3];
 			GetEntPropVector(arrow_particle, Prop_Data, "m_vecAbsOrigin", f3_PositionTemp);
