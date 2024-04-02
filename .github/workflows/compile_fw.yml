@@ -78,3 +78,9 @@ jobs:
         run: |
           spcomp -O2 -v2 -i "include" -o fortress_wars.smx fortress_wars.sp
         working-directory: ${{ env.SCRIPTS_PATH }}
+      
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: fortress_wars.smx
+          path: addons/sourcemod/scripting/fortress_wars.smx

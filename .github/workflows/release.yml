@@ -1,14 +1,14 @@
-name: Compile NOG
+name: Release
 
 on:
   push:
     branches:
       - 'master'
-  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, '#')"
     strategy:
       matrix:
         sm-version: ['1.12.7053']
@@ -24,7 +24,7 @@ jobs:
       
       - name: Get GitHub Env
         run: |
-          echo "PLUGIN_VERSION_REVISION<<EOF" >> $GITHUB_ENV
+          echo "PLUGIN_VERSION<<EOF" >> $GITHUB_ENV
           git rev-list --count HEAD >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
       
@@ -76,11 +76,41 @@ jobs:
       
       - name: Compile ${{ matrix.sm-version }}
         run: |
-          spcomp -E -O2 -v2 -i "include" -o npc_framework.smx npc_framework.sp
+          mkdir -p plugins
+          spcomp -E -O2 -v2 -i "include" -o "plugins/zombie_riot.smx" zombie_riot.sp
         working-directory: ${{ env.SCRIPTS_PATH }}
       
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@master
+      - name: Setup Package
+        run: |
+          mkdir -p Update-Zombie-Riot/configs
+          cp -r addons/sourcemod/scripting/plugins Update-Zombie-Riot
+          cp -r addons/sourcemod/translations Update-Zombie-Riot
+          cp -r addons/sourcemod/gamedata Update-Zombie-Riot
+          cp -r addons/sourcemod/configs/zombie_riot Update-Zombie-Riot/configs
+          mkdir -p New-Install-Zombie-Riot/addons/sourcemod/configs
+          cp -r models New-Install-Zombie-Riot
+          cp -r materials New-Install-Zombie-Riot
+          cp -r sound New-Install-Zombie-Riot
+          cp -r addons/sourcemod/scripting/plugins New-Install-Zombie-Riot/addons/sourcemod
+          cp -r addons/sourcemod/translations New-Install-Zombie-Riot/addons/sourcemod
+          cp -r addons/sourcemod/gamedata New-Install-Zombie-Riot/addons/sourcemod
+          cp -r addons/sourcemod/configs/zombie_riot New-Install-Zombie-Riot/addons/sourcemod/configs
+        working-directory: ./
+      
+      - name: Package Update
+        uses: montudor/action-zip@v1
         with:
-          name: npc_framework.smx
-          path: addons/sourcemod/scripting/npc_framework.smx
+          args: zip -qq -r Update-Zombie-Riot-v${{env.PLUGIN_VERSION}}.zip New-Install-Zombie-Riot
+      
+      - name: Package Full
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r New-Install-Zombie-Riot-v${{env.PLUGIN_VERSION}}.zip New-Install-Zombie-Riot
+      
+      - name: Release
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: v${{env.PLUGIN_VERSION}}
+          files: |
+            New-Install-Zombie-Riot-v${{env.PLUGIN_VERSION}}.zip
+            Update-Zombie-Riot-v${{env.PLUGIN_VERSION}}.zip
