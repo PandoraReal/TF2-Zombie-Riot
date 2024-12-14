@@ -384,8 +384,8 @@
 	}
 	"Xeno Swordsman Desc"
 	{
-		"en" 		"The xeno infection even was able to infect roman powers.\nPulse attack resistance still applies (can be silenced)."
-		"ru"		"Ксено инфекция смогла заразить даже римские силы.\nСопротивление от атаки пульсом(Можно заглушить)."
+		"en" 		"The xeno infection even was able to infect Whiteflower army.\nPulse attack resistance still applies (can be silenced)."
+		"ru"		"Ксено инфекция смогла заразить даже Армию Белого Цветка.\nСопротивление от атаки пульсом(Можно заглушить)."
 	}
 	"Xeno Elite Desc"
 	{
@@ -2384,5 +2384,29 @@
 	"Agent Smith Desc"
 	{
 		"en"		"It is purpose that defines us. Initially appears as a normal boss which can multiply for up to 64 times. Appears later on once more, with the ability to infect players and turn them into clones, better cure them fast!"
+	}
+	"W.F. Extreme Knight Giant Desc"
+	{
+		"en"		"A Giant Knight that fires a barrage of projectiles that if misses intial target will readjuct their direction towards closest target"
+	}
+	"W.F. Raging Blader desc"
+	{
+		"en"		"Attacks Faster the lower their hp is up to insane amounts. if killed for the first time revive with full health"
+	}
+	"W.F. Acclaimed Swordsman"
+	{
+		"en"		"Deals massive damage and prepares an assult of pulse attacks. Gains resistance during pulse attacks (can be silenced)"	
+	}
+	"W.F. Ekas Piloteer"
+	{
+		"en"		"Pilots of Ouroboros Ekas. shoots you with pistol and then proceeds to kick you and launch homing rocket"
+	}
+	"W.F. Flowering Darkness"
+	{
+		"en"		"WhiteFlower Right hand man.Deals massive damage causing screenshake on hit.\npulse attack creates after-image that shoots 1 straight and 2 homing projectiles."
+	}
+	"Whiteflower The Traitor"
+	{
+		"en"		"The traitor and army leader.Stars off with massive resistances which fade away with death of his army.Upon use of Octane kick will spawn homing rockets.\nCan combo by kicking you up into air and Octane Kicking you."
 	}
 }
