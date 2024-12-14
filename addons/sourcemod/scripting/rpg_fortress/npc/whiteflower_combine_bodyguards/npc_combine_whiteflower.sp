@@ -71,9 +71,9 @@ public void Whiteflower_Boss_OnMapStart_NPC()
 	PrecacheSoundCustom("rpg_fortress/enemy/whiteflower_dash.mp3");
 }
 
-static any ClotSummon(int client, float vecPos[3], float vecAng[3], int ally, const char[] data)
+static any ClotSummon(int client, float vecPos[3], float vecAng[3], int team, const char[] data)
 {
-	return Whiteflower_Boss(client, vecPos, vecAng, ally, data);
+	return Whiteflower_Boss(vecPos, vecAng, team, data);
 }
 
 methodmap Whiteflower_Boss < CClotBody
@@ -243,7 +243,7 @@ methodmap Whiteflower_Boss < CClotBody
 		}
 		return -1;
 	}
-	public Whiteflower_Boss(int client, float vecPos[3], float vecAng[3], int ally, const char[] data)
+	public Whiteflower_Boss(float vecPos[3], float vecAng[3], int ally, const char[] data)
 	{
 		Whiteflower_Boss npc = view_as<Whiteflower_Boss>(CClotBody(vecPos, vecAng, COMBINE_CUSTOM_MODEL, "1.15", "300", ally, false,_,_,_,_));
 
@@ -306,8 +306,7 @@ methodmap Whiteflower_Boss < CClotBody
 	
 }
 
-//TODO 
-//Rewrite
+
 public void Whiteflower_Boss_ClotThink(int iNPC)
 {
 	Whiteflower_Boss npc = view_as<Whiteflower_Boss>(iNPC);
@@ -752,20 +751,23 @@ public void Whiteflower_Boss_NPCDeath(int entity)
 	{
 		npc.PlayDeathSound();
 	}
-	float AllyPos[3];
-	float SelfPos[3];
-	float flDistanceToTarget;
-	GetEntPropVector(entity, Prop_Data, "m_vecAbsOrigin", SelfPos);
-	for(int client = 1; client <= MaxClients; client++)
+	if(b_thisNpcIsABoss[npc.index])
 	{
-		if(IsValidClient(client) && Dungeon_IsDungeon(client))
+		float AllyPos[3];
+		float SelfPos[3];
+		float flDistanceToTarget;
+		GetEntPropVector(entity, Prop_Data, "m_vecAbsOrigin", SelfPos);
+		for(int client = 1; client <= MaxClients; client++)
 		{
-			GetEntPropVector(client, Prop_Data, "m_vecAbsOrigin", AllyPos);
-			flDistanceToTarget = GetVectorDistance(SelfPos, AllyPos, true);
-			if(flDistanceToTarget < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 24.0))
+			if(IsValidClient(client) && Dungeon_IsDungeon(client))
 			{
-				CPrintToChat(client, "{crimson}Whiteflower{default}: I'll be back... even if i have to it... alone...");	
-				CPrintToChat(client, "Whiteflower Escapes.");	
+				GetEntPropVector(client, Prop_Data, "m_vecAbsOrigin", AllyPos);
+				flDistanceToTarget = GetVectorDistance(SelfPos, AllyPos, true);
+				if(flDistanceToTarget < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 24.0))
+				{
+					CPrintToChat(client, "{crimson}Whiteflower{default}: I'll be back... even if i have to it... alone...");	
+					CPrintToChat(client, "Whiteflower Escapes.");	
+				}
 			}
 		}
 	}
@@ -873,8 +875,8 @@ public Action Timer_WF_SupportGrenadeIndication(Handle timer, DataPack pack)
 	}
 	else
 	{
-		spawnRing_Vectors(pos, RangeSupport * 2.0, 0.0, 0.0, 0.0, "materials/sprites/laserbeam.vmt", 255, 0, 0, 200, 1, 0.3, 2.0, 2.0, 2);
-		spawnRing_Vectors(pos, RangeSupport2 * 2.0, 0.0, 0.0, 0.0, "materials/sprites/laserbeam.vmt", 255, 0, 0, 200, 1, 0.3, 2.0, 2.0, 2);
+		spawnRing_Vectors(pos, RangeSupport * 2.0, 0.0, 0.0, 0.0, "materials/sprites/laserbeam.vmt", 0, 255, 0, 200, 1, 0.3, 2.0, 2.0, 2);
+		spawnRing_Vectors(pos, RangeSupport2 * 2.0, 0.0, 0.0, 0.0, "materials/sprites/laserbeam.vmt", 0, 255, 0, 200, 1, 0.3, 2.0, 2.0, 2);
 	}
 	return Plugin_Continue;
 }

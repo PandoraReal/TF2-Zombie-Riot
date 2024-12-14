@@ -379,7 +379,7 @@ public void BobTheGod_ClotThink(int iNPC)
 		{
 			float vecTarget[3]; WorldSpaceCenter(client, vecTarget );
 			float Vecself[3]; WorldSpaceCenter(npc.index, Vecself );
-			flDistanceToOwner = GetVectorDistance(vecTarget, Vecself);
+			flDistanceToOwner = GetVectorDistance(vecTarget, Vecself, true);
 		}
 		else
 		{
@@ -408,7 +408,7 @@ public void BobTheGod_ClotThink(int iNPC)
 			
 			float vecTarget[3]; WorldSpaceCenter(attacker, vecTarget );
 			float Vecself[3]; WorldSpaceCenter(npc.index, Vecself);	
-			float flDistanceToTarget = GetVectorDistance(vecTarget, Vecself);
+			float flDistanceToTarget = GetVectorDistance(vecTarget, Vecself, true);
 			
 			if(!IsPlayerAlive(client))
 			{
@@ -416,7 +416,7 @@ public void BobTheGod_ClotThink(int iNPC)
 				// Just kill him off, makes it easier on us.
 				flDistanceToTarget = 0.0;
 			}
-			if(flDistanceToTarget < 1000.0)
+			if(flDistanceToTarget < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 9.0))
 			{
 				npc.m_iTarget = attacker;
 			}
@@ -428,7 +428,7 @@ public void BobTheGod_ClotThink(int iNPC)
 	}
 	
 	
-	if(npc.m_iTarget != 0 && npc.m_flComeToMe < GetGameTime(npc.index) && npc.m_flDoingSpecial < GetGameTime(npc.index) && !npc.m_bIsFriendly && (flDistanceToOwner < 1000 || !npc.m_b_stand_still))
+	if(npc.m_iTarget != 0 && npc.m_flComeToMe < GetGameTime(npc.index) && npc.m_flDoingSpecial < GetGameTime(npc.index) && !npc.m_bIsFriendly && (flDistanceToOwner < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 9.0) || !npc.m_b_stand_still))
 	{
 		npc.m_iState = 1;
 		
@@ -446,7 +446,7 @@ public void BobTheGod_ClotThink(int iNPC)
 			float vecTarget[3]; WorldSpaceCenter(PrimaryThreatIndex, vecTarget);
 					
 			float Vecself[3]; WorldSpaceCenter(client, Vecself);	
-			float flDistanceToTarget = GetVectorDistance(vecTarget, Vecself);
+			float flDistanceToTarget = GetVectorDistance(vecTarget, Vecself, true);
 			if (npc.m_fbGunout == false && npc.m_flReloadDelay < GetGameTime(npc.index))
 			{
 				if (!npc.m_bmovedelay)
@@ -475,7 +475,7 @@ public void BobTheGod_ClotThink(int iNPC)
 			}
 			
 			
-			if(flDistanceToTarget > 170)
+			if(flDistanceToTarget > (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 2.0))
 			{
 				NPC_SetGoalEntity(npc.index, PrimaryThreatIndex);
 			}
@@ -485,7 +485,7 @@ public void BobTheGod_ClotThink(int iNPC)
 				NPC_SetGoalVector(npc.index, vPredictedPos);
 			}
 			
-			if((!npc.m_b_stand_still && npc.m_flNextRangedAttack < GetGameTime(npc.index) && flDistanceToTarget > 200 && flDistanceToTarget < 1000 && npc.m_flReloadDelay < GetGameTime(npc.index)) || (npc.m_b_stand_still && npc.m_flNextRangedAttack < GetGameTime(npc.index) && npc.m_flReloadDelay < GetGameTime(npc.index) && flDistanceToTarget > 100))
+			if((!npc.m_b_stand_still && npc.m_flNextRangedAttack < GetGameTime(npc.index) && flDistanceToTarget > (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 2.0) && flDistanceToTarget < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 10.0) && npc.m_flReloadDelay < GetGameTime(npc.index)) || (npc.m_b_stand_still && npc.m_flNextRangedAttack < GetGameTime(npc.index) && npc.m_flReloadDelay < GetGameTime(npc.index) && flDistanceToTarget > (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 2.0)))
 			{
 	
 				float vecSpread = 0.1;
@@ -578,9 +578,9 @@ public void BobTheGod_ClotThink(int iNPC)
 					npc.m_bReloaded = false;
 				}
 			}
-			else if((!npc.m_b_stand_still && (flDistanceToTarget < 200 || flDistanceToTarget > 1000) && npc.m_flReloadDelay < GetGameTime(npc.index)) || (npc.m_b_stand_still && flDistanceToTarget < 100 && npc.m_flReloadDelay < GetGameTime(npc.index)))
+			else if((!npc.m_b_stand_still && (flDistanceToTarget < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 2.0) || flDistanceToTarget > (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 10.0)) && npc.m_flReloadDelay < GetGameTime(npc.index)) || (npc.m_b_stand_still && flDistanceToTarget < 100 && npc.m_flReloadDelay < GetGameTime(npc.index)))
 			{
-				if(!npc.m_b_stand_still && flDistanceToTarget > 100)
+				if(!npc.m_b_stand_still && flDistanceToTarget > (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 2.0))
 				{
 					npc.StartPathing();
 					
@@ -588,7 +588,7 @@ public void BobTheGod_ClotThink(int iNPC)
 					//Look at target so we hit.
 					npc.FaceTowards(vecTarget, 1500.0);
 				}
-				if(npc.m_flNextRangedSpecialAttack < GetGameTime(npc.index) && flDistanceToTarget < 150 || (!npc.m_flAttackHappenswillhappen && npc.m_fbRangedSpecialOn))
+				if(npc.m_flNextRangedSpecialAttack < GetGameTime(npc.index) && flDistanceToTarget < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 1.4) || (!npc.m_flAttackHappenswillhappen && npc.m_fbRangedSpecialOn))
 				{
 					npc.FaceTowards(vecTarget, 2000.0);
 					if(!npc.m_fbRangedSpecialOn)
@@ -645,7 +645,7 @@ public void BobTheGod_ClotThink(int iNPC)
 						FireBullet(npc.index, npc.index, npc_pos, vecDir, 125.0, 9999.0, DMG_BULLET, "bullet_tracer02_blue", _);
 					}
 				}
-				if(npc.m_flNextMeleeAttack < GetGameTime(npc.index) && flDistanceToTarget < 100 && !npc.m_fbRangedSpecialOn || (npc.m_flAttackHappenswillhappen && !npc.m_fbRangedSpecialOn))
+				if(npc.m_flNextMeleeAttack < GetGameTime(npc.index) && flDistanceToTarget < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 2.0) && !npc.m_fbRangedSpecialOn || (npc.m_flAttackHappenswillhappen && !npc.m_fbRangedSpecialOn))
 				{
 					NPC_StopPathing(npc.index);
 					npc.m_bPathing = false;
@@ -754,9 +754,9 @@ public void BobTheGod_ClotThink(int iNPC)
 			float vecTarget[3]; WorldSpaceCenter(client, vecTarget );
 			
 			float Vecself[3]; WorldSpaceCenter(npc.index, Vecself);	
-			float flDistanceToTarget = GetVectorDistance(vecTarget, Vecself);
+			float flDistanceToTarget = GetVectorDistance(vecTarget, Vecself, true);
 			
-			if (flDistanceToTarget > 300 && npc.m_flReloadDelay < GetGameTime(npc.index))
+			if (flDistanceToTarget > (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 5.0) && npc.m_flReloadDelay < GetGameTime(npc.index))
 			{
 				npc.StartPathing();
 				
@@ -776,7 +776,7 @@ public void BobTheGod_ClotThink(int iNPC)
 				}
 				npc.m_iState = 0;
 			}
-			else if (flDistanceToTarget > 140 && flDistanceToTarget < 300 && npc.m_flReloadDelay < GetGameTime(npc.index))
+			else if (flDistanceToTarget > (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 2.0) && flDistanceToTarget < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 3.5) && npc.m_flReloadDelay < GetGameTime(npc.index))
 			{
 				npc.StartPathing();
 				
@@ -832,7 +832,7 @@ public void BobTheGod_ClotThink(int iNPC)
 				npc.m_flidle_talk = GetGameTime(npc.index) + GetRandomFloat(10.0, 20.0);
 			}
 			
-			if (flDistanceToTarget < 250 && npc.m_iAttacksTillReload != 24)
+			if (flDistanceToTarget < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 4.0) && npc.m_iAttacksTillReload != 24)
 			{
 				npc.AddGesture("ACT_RELOAD_PISTOL");
 				npc.m_flReloadDelay = GetGameTime(npc.index) + 1.4;
@@ -847,7 +847,7 @@ public void BobTheGod_ClotThink(int iNPC)
 				PrintHintText(client, "%t %t","Bob The Second:", "Reloading near you, sir!");
 				StopSound(client, SNDCHAN_STATIC, "UI/hint.wav");
 			}
-			else if(flDistanceToTarget < 250 && npc.m_flReloadDelay < GetGameTime(npc.index) && npc.m_iAttacksTillReload == 24)
+			else if(flDistanceToTarget < (NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 4.0) && npc.m_flReloadDelay < GetGameTime(npc.index) && npc.m_iAttacksTillReload == 24)
 			{
 				if (!npc.m_bReloaded)
 				{

@@ -2,6 +2,7 @@
 #pragma newdecls required
 
 static float i_WasInUber[MAXTF2PLAYERS] = {0.0,0.0,0.0};
+static float i_WasInMarkedForDeathSilent[MAXTF2PLAYERS] = {0.0,0.0,0.0};
 static float i_WasInMarkedForDeath[MAXTF2PLAYERS] = {0.0,0.0,0.0};
 static float i_WasInDefenseBuff[MAXTF2PLAYERS] = {0.0,0.0,0.0};
 static float i_WasInJarate[MAXTF2PLAYERS] = {0.0,0.0,0.0};
@@ -9,6 +10,7 @@ static float f_EntityHazardCheckDelay[MAXTF2PLAYERS];
 static float f_EntityOutOfNav[MAXTF2PLAYERS];
 static float f_LatestDamageRes[MAXTF2PLAYERS];
 static float f_TimeSinceLastRegenStop[MAXTF2PLAYERS];
+static bool b_GaveMarkForDeath[MAXTF2PLAYERS];
 
 bool Client_Had_ArmorDebuff[MAXTF2PLAYERS];
 
@@ -34,12 +36,14 @@ void SDKHooks_ClearAll()
 	Zero(f_EntityOutOfNav);
 	
 	Zero(i_WasInUber);
+	Zero(i_WasInMarkedForDeathSilent);
 	Zero(i_WasInMarkedForDeath);
 	Zero(i_WasInDefenseBuff);
 	Zero(i_WasInJarate);
 	Zero(i_WasInResPowerup);
 	Zero(Client_Had_ArmorDebuff);
 	Zero(f_TimeSinceLastRegenStop);
+	Zero(b_GaveMarkForDeath);
 }
 
 void SDKHook_PluginStart()
@@ -339,6 +343,7 @@ public void OnPreThinkPost(int client)
 		SetEntProp(client, Prop_Send, "m_bAllowAutoMovement", 1);
 	}
 	CvarAirAcclerate.FloatValue = b_AntiSlopeCamp[client] ? 2.0 : 10.0;
+	Cvar_clamp_back_speed.FloatValue = f_Client_BackwardsWalkPenalty[client];
 }
 #endif	// ZR & RPG
 
@@ -430,6 +435,13 @@ public void OnPostThink(int client)
 			ReplicateClient_Svairaccelerate[client] = 10.0;
 			CvarAirAcclerate.ReplicateToClient(client, "10.0"); //set replicate back to normal.
 		}
+	}
+	if(ReplicateClient_BackwardsWalk[client] != f_Client_BackwardsWalkPenalty[client])
+	{
+		char IntToStringDo[4];
+		FloatToString(f_Client_BackwardsWalkPenalty[client], IntToStringDo, sizeof(IntToStringDo));
+		Cvar_clamp_back_speed.ReplicateToClient(client, IntToStringDo); //set down
+		ReplicateClient_BackwardsWalk[client] = f_Client_BackwardsWalkPenalty[client];
 	}
 		
 	//Reduce knockback when airborn, this is to fix issues regarding flying way too high up, making it really easy to tank groups!
@@ -725,6 +737,8 @@ public void OnPostThink(int client)
 		}
 
 		Armor_regen_delay[client] = GameTime + 1.0;
+		SDkHooks_Think_TutorialStepsDo(client);
+
 	}
 #endif	// ZR
 
@@ -887,6 +901,17 @@ public void OnPostThink(int client)
 				IsReady = false;
 				had_An_ability = true;
 			}
+			
+			if(Store_ActiveCanMulti(client))
+			{
+				if(had_An_ability)
+				{
+					Format(buffer, sizeof(buffer), "| %s", buffer);
+				}	
+				Format(buffer, sizeof(buffer), "[H] %s", buffer);
+				IsReady = false;
+				had_An_ability = true;
+			}
 #endif
 			
 			if(had_An_ability)
@@ -899,6 +924,7 @@ public void OnPostThink(int client)
 			float value = 1.0;
 
 #if defined ZR
+			
 			percentage_Global *= ArmorPlayerReduction(client);
 			percentage_Global *= Player_OnTakeDamage_Equipped_Weapon_Logic_Hud(client, weapon);
 			int testvalue1 = 0;
@@ -1246,7 +1272,7 @@ public void OnPostThink(int client)
 			{
 				char NameOverride[256];
 				NameOverride = form.Name;
-				if(form.Func_FormNameOverride != INVALID_FUNCTION)
+				if(form.Func_FormNameOverride != INVALID_FUNCTION && form.Func_FormNameOverride) //somehow errors with 0, i dont know, whatever.
 				{
 					Call_StartFunction(null, form.Func_FormNameOverride);
 					Call_PushCell(client);
@@ -1344,6 +1370,13 @@ public void OnPostThink(int client)
 					green = 8;
 					blue = 209;
 				}
+				//matrix
+				case 4:
+				{
+					red = 0;
+					green = 200;
+					blue = 0;
+				}
 				//seaborn
 				default:
 				{
@@ -1424,35 +1457,57 @@ public void OnPostThink(int client)
 			}
 		}
 		int armor = abs(Armor_Charge[armorEnt]);
-		for(int i=6; i>0; i--)
+		if(!b_EnableNumeralArmor[client])
 		{
-			if(Armor_Charge[armorEnt] == 0)
+			for(int i=6; i>0; i--)
 			{
-				Format(buffer, sizeof(buffer), "%s%s", buffer, "--");
+				if(Armor_Charge[armorEnt] == 0)
+				{
+					Format(buffer, sizeof(buffer), "%s%s", buffer, "--");
+				}
+				else if(armor >= Armor_Max*(i*0.1666) || (Armor_Regenerating && ArmorRegenCounter[client] == i))
+				{
+					Format(buffer, sizeof(buffer), "%s%s", buffer, CHAR_FULL);
+				}
+				else if(armor > Armor_Max*(i*0.1666 - 1.0/15.0))
+				{
+					Format(buffer, sizeof(buffer), "%s%s", buffer, CHAR_PARTFULL);
+				}
+				else if(armor > Armor_Max*(i*0.1666 - 1.0/10.0))
+				{
+					Format(buffer, sizeof(buffer), "%s%s", buffer, CHAR_PARTEMPTY);
+				}
+				else
+				{
+					Format(buffer, sizeof(buffer), "%s%s", buffer, CHAR_EMPTY);
+				}
+				
+				if((i % 2) == 1)
+				{
+					Format(buffer, sizeof(buffer), "%s\n", buffer);
+				}
 			}
-			else if(armor >= Armor_Max*(i*0.1666) || (Armor_Regenerating && ArmorRegenCounter[client] == i))
+		}
+		else
+		{
+			char c_ArmorCurrent[255];
+			if(Armor_Charge[armorEnt] >= 0)
 			{
-				Format(buffer, sizeof(buffer), "%s%s", buffer, CHAR_FULL);
-			}
-			else if(armor > Armor_Max*(i*0.1666 - 1.0/15.0))
-			{
-				Format(buffer, sizeof(buffer), "%s%s", buffer, CHAR_PARTFULL);
-			}
-			else if(armor > Armor_Max*(i*0.1666 - 1.0/10.0))
-			{
-				Format(buffer, sizeof(buffer), "%s%s", buffer, CHAR_PARTEMPTY);
+				IntToString(armor,c_ArmorCurrent, sizeof(c_ArmorCurrent));
+				int offset = armor < 0 ? 1 : 0;
+				ThousandString(c_ArmorCurrent[offset], sizeof(c_ArmorCurrent) - offset);
+				Format(buffer, sizeof(buffer), "%s|%s|\n", buffer, c_ArmorCurrent);
 			}
 			else
 			{
-				Format(buffer, sizeof(buffer), "%s%s", buffer, CHAR_EMPTY);
-			}
-			
-			if((i % 2) == 1)
-			{
-				Format(buffer, sizeof(buffer), "%s\n", buffer);
+				
+				Armor_Max -= armor;
+				IntToString(Armor_Max,c_ArmorCurrent, sizeof(c_ArmorCurrent));
+				int offset = Armor_Max < 0 ? 1 : 0;
+				ThousandString(c_ArmorCurrent[offset], sizeof(c_ArmorCurrent) - offset);
+				Format(buffer, sizeof(buffer), "%s|%s|\n", buffer, c_ArmorCurrent);
 			}
 		}
-			
 		if(i_CurrentEquippedPerk[client] == 6)
 		{
 			static float slowdown_amount;
@@ -1467,17 +1522,20 @@ public void OnPostThink(int client)
 				Format(buffer, sizeof(buffer), "%s%.1f", buffer, slowdown_amount);
 			}
 		}
+		else if(i_CurrentEquippedPerk[client] >= 1)
+		{
+			Format(buffer, sizeof(buffer), "%s%c%c", buffer, PerkNames[i_CurrentEquippedPerk[client]][0], PerkNames[i_CurrentEquippedPerk[client]][1]);
+		}
 		SetHudTextParams(0.175 + f_ArmorHudOffsetY[client], 0.925 + f_ArmorHudOffsetX[client], 0.81, red, green, blue, 255);
 		ShowSyncHudText(client, SyncHud_ArmorCounter, "%s", buffer);
 			
-			
+				
 		char HudBuffer[256];
 		
 		if(!TeutonType[client])
 		{
 			int downsleft;
 			downsleft = 2;
-
 			/*
 			if(b_LeftForDead[client])
 			{
@@ -1489,40 +1547,28 @@ public void OnPostThink(int client)
 			}
 			*/
 			downsleft -= i_AmountDowned[client];
-			if(downsleft < 0)
-			{
-				downsleft = 0;
-			}
-			/*
-			if(b_LeftForDead[client])
-			{
-				if(downsleft > 1)
-				{
-					downsleft = 1;
-				}
-			}
-			*/
+			SDKHooks_UpdateMarkForDeath(client);
 
-			Format(HudBuffer, sizeof(HudBuffer), "%s\n%t\n%t\n%t", HudBuffer,
-			"Credits_Menu_New", GlobalExtraCash + CashRecievedNonWave[client],	
-			"Ammo Crate Supplies", (Ammo_Count_Ready - Ammo_Count_Used[client]),
-			PerkNames[i_CurrentEquippedPerk[client]]
-			);
 
-			if(b_LeftForDead[client])
+			if(!HudBuffer[0] && CashSpent[client] < 1)
+			{
+				Format(HudBuffer, sizeof(HudBuffer), "%t", "Press To Open Store");
+			}
+			if(b_EnableCountedDowns[client])
 			{
 				Format(HudBuffer, sizeof(HudBuffer), "%s\n%t", HudBuffer,
-					"Downs left", downsleft ? 1 : 0);
+				"Downs left", downsleft
+				);
 			}
-			else
+			if(b_EnableRightSideAmmoboxCount[client])
 			{
 				Format(HudBuffer, sizeof(HudBuffer), "%s\n%t", HudBuffer,
-					"Downs left", downsleft);	
+				"Ammo Crate Supplies", Ammo_Count_Ready - Ammo_Count_Used[client]
+				);
 			}
-			if(Store_ActiveCanMulti(client))
-			{
-				Format(HudBuffer, sizeof(HudBuffer), "%s\n\n%t", HudBuffer, "Press Button To Switch");
-			}
+
+			
+			
 		}
 		else if (TeutonType[client] == TEUTON_DEAD)
 		{
@@ -1623,7 +1669,11 @@ void RegainTf2Buffs(int victim)
 	}
 	if(i_WasInMarkedForDeath[victim])
 	{
-		TF2_AddCondition(victim, TFCond_MarkedForDeathSilent, i_WasInMarkedForDeath[victim]);
+		TF2_AddCondition(victim, TFCond_MarkedForDeath, i_WasInMarkedForDeath[victim]);
+	}
+	if(i_WasInMarkedForDeathSilent[victim])
+	{
+		TF2_AddCondition(victim, TFCond_MarkedForDeathSilent, i_WasInMarkedForDeathSilent[victim]);
 	}
 	if(i_WasInJarate[victim])
 	{
@@ -1638,7 +1688,7 @@ void RegainTf2Buffs(int victim)
 		TF2_AddCondition(victim, TFCond_RuneResist, i_WasInResPowerup[victim]);
 	}
 	i_WasInUber[victim] = 0.0;
-	i_WasInMarkedForDeath[victim] = 0.0;
+	i_WasInMarkedForDeathSilent[victim] = 0.0;
 	i_WasInDefenseBuff[victim] = 0.0;
 	i_WasInJarate[victim] = 0.0;
 	i_WasInResPowerup[victim] = 0.0;
@@ -1667,16 +1717,16 @@ public Action Player_OnTakeDamage(int victim, int &attacker, int &inflictor, flo
 	ClientPassAliveCheck[victim] = false;
 #if defined ZR
 	i_WasInUber[victim] = 0.0;
+	i_WasInMarkedForDeathSilent[victim] = 0.0;
 	i_WasInMarkedForDeath[victim] = 0.0;
 	i_WasInDefenseBuff[victim] = 0.0;
 #endif
-#if defined RPG
 	//dmg bonus before everything!
-	//this is only for zr! RPG handles it som
+	//This is for players in specific, both handle it here!
 	if(attacker > 0 && attacker <= MAXENTITIES)
 		damage *= fl_Extra_Damage[attacker];
-#endif
 #if defined RPG
+		
 	if(attacker <= MaxClients)
 	{
 		//in pvp, we half the damage. this is also BEFORE flat resistance.
@@ -2042,7 +2092,9 @@ public Action Player_OnTakeDamageAlive_DeathCheck(int victim, int &attacker, int
 				{
 					dieingstate[victim] = 500;
 				}
+				dieingstate[victim] -= RoundToNearest(Attributes_FindOnPlayerZR(victim, Attrib_ReviveTimeCut, false, 0.0));
 				ForcePlayerCrouch(victim, true);
+				SDKHooks_UpdateMarkForDeath(victim, true);
 				//cooldown for left for dead.
 				SpecterResetHudTime(victim);
 				ApplyLastmanOrDyingOverlay(victim);
@@ -2127,9 +2179,14 @@ public Action Player_OnTakeDamageAlive_DeathCheck(int victim, int &attacker, int
 #if defined ZR || defined RPG
 void Replicate_Damage_Medications(int victim, float &damage, int damagetype)
 {
+	if(TF2_IsPlayerInCondition(victim, TFCond_MarkedForDeath))
+	{
+		i_WasInMarkedForDeath[victim] = TF2Util_GetPlayerConditionDuration(victim, TFCond_MarkedForDeath);
+		TF2_RemoveCondition(victim, TFCond_MarkedForDeath);
+	}
 	if(TF2_IsPlayerInCondition(victim, TFCond_MarkedForDeathSilent))
 	{
-		i_WasInMarkedForDeath[victim] = TF2Util_GetPlayerConditionDuration(victim, TFCond_MarkedForDeathSilent);
+		i_WasInMarkedForDeathSilent[victim] = TF2Util_GetPlayerConditionDuration(victim, TFCond_MarkedForDeathSilent);
 		TF2_RemoveCondition(victim, TFCond_MarkedForDeathSilent);
 		damage *= 1.15;
 	}
@@ -2253,6 +2310,16 @@ public Action SDKHook_NormalSHook(int clients[MAXPLAYERS], int &numClients, char
 		return Plugin_Changed;
 	}
 	*/
+	if(StrContains(sample, "weapons/quake_explosion_remastered.wav", true) != -1)
+	{
+		volume *= 0.8;
+		level = 80;
+
+		//Very loud. 
+		//need to reduce.
+		return Plugin_Changed;
+	}
+
 	if(StrContains(sample, "vo/", true) != -1)
 	{
 		if(entity > 0 && entity <= MaxClients)
@@ -2507,6 +2574,95 @@ void CauseFadeInAndFadeOut(int client = 0, float duration_in, float duration_hol
 	AcceptEntityInput(FadeEntity, "Fade");
 	CreateTimer((duration_in + duration_hold), Timer_CauseFadeInAndFadeOut, duration_out);
 }
+
+static int Building_particle_Owner[MAXENTITIES];
+void SDKHooks_UpdateMarkForDeath(int client, bool force_Clear = false)
+{
+//	if(!b_GaveMarkForDeath[client])
+//		return;
+	if(!IsValidClient(client))
+	{
+		int entity = EntRefToEntIndex(i_DyingParticleIndication[client][2]);
+		if(entity > MaxClients)
+			RemoveEntity(entity);
+			
+		return;
+	}
+	if (GetTeam(client) != TFTeam_Red)
+		force_Clear = true;
+
+	if (dieingstate[client] != 0)
+		force_Clear = true;
+		
+	if (TeutonType[client] != TEUTON_NONE)
+		force_Clear = true;
+
+	int downsleft;
+	downsleft = 2;
+	downsleft -= i_AmountDowned[client];
+	if(!force_Clear && downsleft <= 0 && !SpecterCheckIfAutoRevive(client))
+	{
+		if(!b_GaveMarkForDeath[client])
+		{
+			TF2_AddCondition(client, TFCond_MarkedForDeath, 9999999.9);
+			b_GaveMarkForDeath[client] = true;
+			
+			int entity = EntRefToEntIndex(i_DyingParticleIndication[client][2]);
+			//this means i dont exist, spawn a new one!!
+			if(entity < MaxClients)
+			{
+				float flPos[3];
+				GetEntPropVector(client, Prop_Data, "m_vecAbsOrigin", flPos);
+				flPos[2] += 95.0;
+				i_DyingParticleIndication[client][2] = EntIndexToEntRef(SDKHooks_SpawnParticleDeath(flPos, "mark_for_death", client)); //ze healing station
+			}
+		}
+	}
+	else
+	{
+		if(force_Clear || b_GaveMarkForDeath[client])
+		{
+			TF2_RemoveCondition(client, TFCond_MarkedForDeath);
+			b_GaveMarkForDeath[client] = false;
+			//delete me!
+			int entity = EntRefToEntIndex(i_DyingParticleIndication[client][2]);
+			if(entity > MaxClients)
+				RemoveEntity(entity);
+		}
+	}
+}
+stock int SDKHooks_SpawnParticleDeath(float position[3], char[] effectName, int iParent, const char[] szAttachment = "", float vOffsets[3] = {0.0,0.0,0.0})
+{
+	int particle = CreateEntityByName("info_particle_system");
+
+	if (particle != -1)
+	{
+		TeleportEntity(particle, position, NULL_VECTOR, NULL_VECTOR);
+		DispatchKeyValue(particle, "targetname", "tf2particle");
+		DispatchKeyValue(particle, "effect_name", effectName);
+		DispatchSpawn(particle);
+
+		SetParent(iParent, particle);
+
+		ActivateEntity(particle);
+
+		AcceptEntityInput(particle, "start");
+
+		Building_particle_Owner[particle] = iParent;
+
+		SetEdictFlags(particle, GetEdictFlags(particle) &~ FL_EDICT_ALWAYS);
+		SDKHook(particle, SDKHook_SetTransmit, SDKHooks_TransmitDoDeathMark);
+	}
+
+	return particle;
+}
+public Action SDKHooks_TransmitDoDeathMark(int entity, int client)
+{
+	if(client == Building_particle_Owner[entity])
+		return Plugin_Handled;
+
+	return Plugin_Continue;
+}
 public Action Timer_CauseFadeInAndFadeOut(Handle timer, float duration_out)
 {
 	/*
@@ -2744,7 +2900,7 @@ void DisplayCosmeticExtraClient(int client, bool deleteOverride = false)
 				{
 					SetEntProp(entity, Prop_Send, "m_nBody", WINGS_FUSION);
 				}
-				case WINGS_TWIRL, WINGS_RULIANA, WINGS_LANCELOT:
+				case WINGS_TWIRL, WINGS_RULIANA, WINGS_LANCELOT, WINGS_STELLA, WINGS_KARLAS:
 				{
 					SetEntProp(entity, Prop_Send, "m_nBody", SettingDo);
 				}
@@ -2765,7 +2921,7 @@ void DisplayCosmeticExtraClient(int client, bool deleteOverride = false)
 			{
 				SetEntProp(entity, Prop_Send, "m_nBody", WINGS_FUSION);
 			}
-			case WINGS_TWIRL, WINGS_RULIANA, WINGS_LANCELOT:
+			case WINGS_TWIRL, WINGS_RULIANA, WINGS_LANCELOT, WINGS_STELLA, WINGS_KARLAS:
 			{
 				SetEntProp(entity, Prop_Send, "m_nBody", SettingDo);
 			}
@@ -3105,4 +3261,9 @@ stock void SDKhooks_SetManaRegenDelayTime(int client, float time)
 	if(!b_AggreviatedSilence[client])
 		mana_regen[client] = 0.0;
 #endif
+}
+
+void SDkHooks_Think_TutorialStepsDo(int client)
+{
+	DoTutorialStep(client, true);
 }

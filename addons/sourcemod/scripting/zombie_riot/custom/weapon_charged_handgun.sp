@@ -288,24 +288,12 @@ public void Weapon_Charged_Handgun(int client, int weapon, const char[] classnam
 			
 			float flMultiplier = GetGameTime(); // 4.0 is the default one
 			
-			if (HasEntProp(weapon, Prop_Send, "m_flChargeBeginTime"))
+			flMultiplier -= GetEntPropFloat(weapon, Prop_Send, "m_flChargeBeginTime");
+			flMultiplier /= base_chargetime[client];
+			if (flMultiplier<3.85)
 			{
-				flMultiplier -= GetEntPropFloat(weapon, Prop_Send, "m_flChargeBeginTime");
-				flMultiplier /= base_chargetime[client];
-				if (flMultiplier<3.85)
-				{
-					SetEntProp(weapon, Prop_Data, "m_iClip1", GetEntProp(weapon, Prop_Data, "m_iClip1")+1);
-					return;
-				}
-			}
-			else 
-			{
-				flMultiplier -= GetEntPropFloat(weapon, Prop_Send, "m_flDetonateTime");
-				if (flMultiplier<-0.05)
-				{
-					SetEntProp(weapon, Prop_Data, "m_iClip1", GetEntProp(weapon, Prop_Data, "m_iClip1")+1);
-					return;
-				}
+				SetEntProp(weapon, Prop_Data, "m_iClip1", GetEntProp(weapon, Prop_Data, "m_iClip1")+1);
+				return;
 			}
 		}
 		
@@ -341,9 +329,7 @@ public void Weapon_Charged_Handgun(int client, int weapon, const char[] classnam
 		AcceptEntityInput(iRot, "Open");
 		EmitSoundToAll(SOUND_WAND_SHOT, client, _, 65, _, 0.45);
 		
-		float damage = 30.0;
-		if (HasEntProp(weapon, Prop_Send, "m_flChargeBeginTime"))
-			damage = 70.0;
+		float damage = 50.0;
 		
 		damage *= Attributes_Get(weapon, 2, 1.0);
 		damage *= (1.0 / Attributes_Get(weapon, 6, 1.0));
@@ -441,7 +427,7 @@ public Action Event_Charged_Hand_OnHatTouch(int entity, int other)
 		int particle = EntRefToEntIndex(Projectile_To_Particle[entity]);
 		if(IsValidEntity(particle) && particle != 0)
 		{
-			EmitSoundToAll(SOUND_ZAP, entity, SNDCHAN_STATIC, 70, _, 0.9);
+			EmitSoundToAll(SOUND_ZAP, entity, SNDCHAN_STATIC, 65, _, 0.65);
 			RemoveEntity(particle);
 		}
 		RemoveEntity(entity);
@@ -451,7 +437,7 @@ public Action Event_Charged_Hand_OnHatTouch(int entity, int other)
 		int particle = EntRefToEntIndex(Projectile_To_Particle[entity]);
 		if(IsValidEntity(particle) && particle != 0)
 		{
-			EmitSoundToAll(SOUND_ZAP, entity, SNDCHAN_STATIC, 70, _, 0.9);
+			EmitSoundToAll(SOUND_ZAP, entity, SNDCHAN_STATIC, 65, _, 0.65);
 			RemoveEntity(particle);
 		}
 		RemoveEntity(entity);
@@ -565,7 +551,7 @@ public Action Event_Wand_IEM_OnHatTouch(int entity, int other)
 		int particle = EntRefToEntIndex(Projectile_To_Particle[entity]);
 		if(IsValidEntity(particle) && particle != 0)
 		{
-			EmitSoundToAll(SOUND_ZAP, entity, SNDCHAN_STATIC, 70, _, 0.9);
+			EmitSoundToAll(SOUND_ZAP, entity, SNDCHAN_STATIC, 65, _, 0.65);
 			RemoveEntity(particle);
 		}
 		RemoveEntity(entity);
@@ -1042,7 +1028,7 @@ public Action Event_Wand_Cutter_IEM_OnHatTouch(int entity, int other)
 		int particle = EntRefToEntIndex(Projectile_To_Particle[entity]);
 		if(IsValidEntity(particle) && particle != 0)
 		{
-			EmitSoundToAll(SOUND_ZAP, entity, SNDCHAN_STATIC, 70, _, 0.9);
+			EmitSoundToAll(SOUND_ZAP, entity, SNDCHAN_STATIC, 65, _, 0.65);
 			RemoveEntity(particle);
 		}
 		RemoveEntity(entity);

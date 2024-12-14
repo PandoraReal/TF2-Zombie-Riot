@@ -37,6 +37,7 @@ static bool Dont_Move_Allied_Npc;											//dont move buildings
 
 static bool b_LagCompNPC;
 
+//static DynamicHook HookCreateFakeClientStuff;
 static DynamicHook HookItemIterateAttribute;
 static ArrayList RawEntityHooks;
 static int m_bOnlyIterateItemViewAttributes;
@@ -98,6 +99,11 @@ void DHook_Setup()
 	DHook_CreateDetour(gamedata, "CTFPlayer::GetChargeEffectBeingProvided", DHook_GetChargeEffectBeingProvidedPre, DHook_GetChargeEffectBeingProvidedPost);
 	DHook_CreateDetour(gamedata, "CTFPlayer::ManageRegularWeapons()", DHook_ManageRegularWeaponsPre, DHook_ManageRegularWeaponsPost);
 	DHook_CreateDetour(gamedata, "CTFPlayer::RegenThink", DHook_RegenThinkPre, DHook_RegenThinkPost);
+
+	//Borrowed from Mikusch, thanks!
+	//https://github.com/Mikusch/MannVsMann/blob/db821cd173a53aad4cc499babbcbd118f4cea234/addons/sourcemod/scripting/mannvsmann/dhooks.sp#L315
+	//
+	DHook_CreateDetour(gamedata, "CTFGameRules::IsQuickBuildTime", DHookCallback_CTFGameRules_IsQuickBuildTime_Pre);
 #endif
 
 #if !defined RTS
@@ -140,7 +146,10 @@ void DHook_Setup()
 	{
 		SetFailState("Failed to create hook CBaseEntity::UpdateTransmitState() offset from ZR gamedata!");
 	}
+
+//	HookCreateFakeClientStuff			= DHookCreateEx(gamedata, "CVEngineServer::CreateFakeClientEx",	   HookType_Raw, ReturnType_Int,   ThisPointer_Address, Create_FakeClientExPre);
 	
+
 	ForceRespawn = DynamicHook.FromConf(gamedata, "CBasePlayer::ForceRespawn");
 	if(!ForceRespawn)
 		LogError("[Gamedata] Could not find CBasePlayer::ForceRespawn");
@@ -1140,10 +1149,11 @@ public bool PassfilterGlobal(int ent1, int ent2, bool result)
 #if !defined RTS
 		else if(!b_NpcHasDied[entity1] && GetTeam(entity1) == TFTeam_Red)
 		{
+			
 			//dont be solid to buildings
 			if(i_IsABuilding[entity2] && GetTeam(entity2) == TFTeam_Red)
 				return false;
-			
+
 			///????? i dont know
 			if(!b_NpcHasDied[entity2] && GetTeam(entity2) == TFTeam_Red)
 			{	
@@ -1155,6 +1165,7 @@ public bool PassfilterGlobal(int ent1, int ent2, bool result)
 			{
 				return false;
 			}
+			
 		}
 #endif
 	}
@@ -1338,7 +1349,11 @@ public void LagCompEntitiesThatAreIntheWay(int Compensator)
 		{
 			if(!Dont_Move_Allied_Npc || b_ThisEntityIgnored[baseboss_index_allied])
 			{
-				b_ThisEntityIgnoredEntirelyFromAllCollisions[baseboss_index_allied] = true;
+#if defined ZR
+				//if its a downed citizen, dont!!!
+				if(!Citizen_ThatIsDowned(baseboss_index_allied))
+#endif
+					b_ThisEntityIgnoredEntirelyFromAllCollisions[baseboss_index_allied] = true;
 			}
 		}
 	}
@@ -1394,6 +1409,21 @@ public MRESReturn FinishLagCompensation(Address manager, DHookParam param) //Thi
 //	return MRES_Supercede;
 }
 
+/*
+void Dhook_BotFastNow(int bot)
+{
+	if(HookCreateFakeClientStuff)
+	{
+		int RawHookGive = DHookRaw(HookCreateFakeClientStuff, true, view_as<Address>(baseNPC.GetBody()));
+	}
+}
+public MRESReturn Create_FakeClientExPre(Address pThis, Handle hReturn, Handle hParams)			  
+{ 
+	//this sets the fakebot to true.
+	DHookSetParam(hParams, 2, true);
+	return MRES_Supercede; 
+}
+*/
 void DHook_HookClient(int client)
 {
 
@@ -1782,7 +1812,7 @@ public MRESReturn OnHealingBoltImpactTeamPlayer(int healingBolt, Handle hParams)
 	{
 		float HealAmmount = 20.0;
 
-		HealAmmount *= Attributes_GetOnPlayer(owner, 8, true, !Merchant_IsAMerchant(owner));
+		HealAmmount *= Attributes_GetOnWeapon(owner, originalLauncher, 8, true);
 		
 
 		
@@ -1824,12 +1854,15 @@ public MRESReturn OnHealingBoltImpactTeamPlayer(int healingBolt, Handle hParams)
 
 			HealEntityGlobal(owner, target, float(ammo_amount_left), 1.0, 1.0, _);
 			
-			int new_ammo = GetAmmo(owner, 21) - ammo_amount_left;
 			ClientCommand(owner, "playgamesound items/smallmedkit1.wav");
 			ClientCommand(target, "playgamesound items/smallmedkit1.wav");
 			SetGlobalTransTarget(owner);
 			
 			PrintHintText(owner, "%t", "You healed for", target, ammo_amount_left);
+			if(ammo_amount_left > 0)
+				ReduceMediFluidCost(owner, ammo_amount_left);
+				
+			int new_ammo = GetAmmo(owner, 21) - ammo_amount_left;
 			SetAmmo(owner, 21, new_ammo);
 			Increaced_Overall_damage_Low[owner] = GameTime + 5.0;
 			Increaced_Overall_damage_Low[target] = GameTime + 15.0;
@@ -2255,4 +2288,12 @@ int SetEntityTransmitState(int entity, int newFlags)
 	SetEdictFlags(entity, flags);
 
 	return flags;
+}
+
+
+
+static MRESReturn DHookCallback_CTFGameRules_IsQuickBuildTime_Pre(DHookReturn ret)
+{
+	ret.Value = false;
+	return MRES_Supercede;
 }
