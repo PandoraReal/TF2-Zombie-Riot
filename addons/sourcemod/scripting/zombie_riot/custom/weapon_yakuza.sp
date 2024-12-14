@@ -465,6 +465,7 @@ void Yakuza_WeaponCooldown(int weapon)
 
 	float cooldown = 4.0;
 	cooldown *= Attributes_Get(weapon, 6, 1.0);
+	cooldown *= Attributes_Get(weapon, 396, 1.0);
 	DataPack pack2 = new DataPack();
 	RequestFrame(Yakuza_ApplyWeaponCD, pack2);
 	pack2.WriteCell(EntIndexToEntRef(weapon));
@@ -905,7 +906,7 @@ void Yakuza_NPCTakeDamage(int victim, int attacker, float &damage, int weapon)
 					RemoveEntity(i2_MountedInfoAndBuilding[0][attacker]);
 					i2_MountedInfoAndBuilding[0][attacker] = INVALID_ENT_REFERENCE;
 				}
-				SDKHooks_TakeDamage(building, 0, 0, 1000000.0, DMG_SLASH);
+				DestroyBuildingDo(building);
 			}
 		}
 

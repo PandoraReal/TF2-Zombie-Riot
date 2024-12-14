@@ -253,7 +253,7 @@ void OnMapStart_NPC_Base()
 	
 	PrecacheEffect("ParticleEffect");
 	PrecacheEffect("ParticleEffectStop");
-	PrecacheParticleEffect("burningplayer_red");
+	PrecacheParticleEffect("burningplayer_corpse");
 
 	for (int NpcIndexNumber = 0; NpcIndexNumber < ZR_MAX_NPCS; NpcIndexNumber++)
 	{
@@ -358,7 +358,8 @@ methodmap CClotBody < CBaseCombatCharacter
 						bool IgnoreBuildings = false,
 						bool IsRaidBoss = false,
 						const float CustomThreeDimensions[3] = {0.0,0.0,0.0},
-						bool Ally_Collideeachother = false)
+						bool Ally_Collideeachother = false,
+						const float CustomThreeDimensionsextra[3] = {0.0,0.0,0.0})
 #endif
 	{
 
@@ -520,10 +521,21 @@ methodmap CClotBody < CBaseCombatCharacter
 			m_vecMaxs[0] = f3_CustomMinMaxBoundingBox[npc][0];
 			m_vecMaxs[1] = f3_CustomMinMaxBoundingBox[npc][1];
 			m_vecMaxs[2] = f3_CustomMinMaxBoundingBox[npc][2];
-
-			m_vecMins[0] = -f3_CustomMinMaxBoundingBox[npc][0];
-			m_vecMins[1] = -f3_CustomMinMaxBoundingBox[npc][1];
-			m_vecMins[2] = 0.0;
+			if(CustomThreeDimensionsextra[1] != 0.0)
+			{
+				m_vecMins[0] = CustomThreeDimensionsextra[0];
+				m_vecMins[1] = CustomThreeDimensionsextra[1];
+				m_vecMins[2] = CustomThreeDimensionsextra[2];
+			}
+			else
+			{
+				m_vecMins[0] = -f3_CustomMinMaxBoundingBox[npc][0];
+				m_vecMins[1] = -f3_CustomMinMaxBoundingBox[npc][1];
+				m_vecMins[2] = 0.0;
+			}
+			f3_CustomMinMaxBoundingBoxMinExtra[npc][0] = CustomThreeDimensionsextra[0];
+			f3_CustomMinMaxBoundingBoxMinExtra[npc][1] = CustomThreeDimensionsextra[1];
+			f3_CustomMinMaxBoundingBoxMinExtra[npc][2] = CustomThreeDimensionsextra[2];
 		}
 		//Fix collisions
 		
@@ -3630,13 +3642,13 @@ public void CBaseCombatCharacter_EventKilledLocal(int pThis, int iAttacker, int 
 		MakeObjectIntangeable(pThis);
 		b_ThisEntityIgnored[pThis] = true;
 		b_ThisEntityIgnoredEntirelyFromAllCollisions[pThis] = true;
-	//Do not remove pather here.
+		//Do not remove pather here.
 		RemoveNpcFromEnemyList(pThis, true);
 		b_StaticNPC[pThis] = false;
 
 		if(!npc.m_bDissapearOnDeath)
 		{
-			if(!npc.m_bGib)
+			if((b_OnDeathExtraLogicNpc[pThis] & ZRNPC_DEATH_NOGIB) || !npc.m_bGib)
 			{
 				MakeEntityRagdollNpc(npc.index);
 			}
@@ -3654,12 +3666,6 @@ public void CBaseCombatCharacter_EventKilledLocal(int pThis, int iAttacker, int 
 		Waves_UpdateMvMStats();
 #endif
 	}
-	/*
-	else
-	{	
-		SetNpcToDeadViaGib(pThis);
-	}
-	*/
 }
 
 
@@ -8386,6 +8392,7 @@ public void SetDefaultValuesToZeroNPC(int entity)
 #endif
 //	i_MasterSequenceNpc[entity] = -1;
 	ResetAllArmorStatues(entity);
+	b_OnDeathExtraLogicNpc[entity] = 0;
 	f_DoNotUnstuckDuration[entity] = 0.0;
 	f_UnstuckTimerCheck[entity][0] = 0.0;
 	f_UnstuckTimerCheck[entity][1] = 0.0;
@@ -10573,10 +10580,13 @@ void NpcSpeechBubbleTalk(int iNPC)
 #define THIRDPERSON 2
 
 Handle Timer_Ingition_Settings[MAXENTITIES] = {INVALID_HANDLE, ...};
+Handle Timer_Ingition_ReApply[MAXENTITIES] = {INVALID_HANDLE, ...};
 bool ClientHasSetFire[MAXENTITIES][MAXTF2PLAYERS];
+float Reapply_BurningCorpse[MAXENTITIES];
 
 void IgniteTargetEffect(int target, int ViewmodelSetting = 0, int viewmodelClient = 0)
 {
+	Reapply_BurningCorpse[target] = GetGameTime() + 5.0;
 	if(ViewmodelSetting > 0)
 	{
 		for( int i = 0; i <= MaxClients; i++ ) 
@@ -10598,12 +10608,36 @@ void IgniteTargetEffect(int target, int ViewmodelSetting = 0, int viewmodelClien
 	}
 	else
 	{
-		TE_SetupParticleEffect("burningplayer_red", PATTACH_ABSORIGIN_FOLLOW, target);
+		TE_SetupParticleEffect("burningplayer_corpse", PATTACH_ABSORIGIN_FOLLOW, target);
 		TE_WriteNum("m_bControlPoint1", target);	
-		TE_SendToAll();		
+		TE_SendToAll();
+		if(Timer_Ingition_ReApply[target] != null)
+		{
+			delete Timer_Ingition_ReApply[target];
+			Timer_Ingition_ReApply[target] = null;
+		}		
+		DataPack pack;
+		Timer_Ingition_ReApply[target] = CreateDataTimer(5.0, IgniteTimerVisual_Reignite, pack);
+		pack.WriteCell(target);
+		pack.WriteCell(EntIndexToEntRef(target));
 	}
 }
 
+public Action IgniteTimerVisual_Reignite(Handle timer, DataPack pack)
+{
+	pack.Reset();
+	int targetoriginal = pack.ReadCell();
+	int target = EntRefToEntIndex(pack.ReadCell());
+	if(!IsValidEntity(target))
+	{
+		Timer_Ingition_ReApply[targetoriginal] = null;
+		return Plugin_Continue;
+	}	
+	ExtinguishTarget(target, true);
+	Timer_Ingition_ReApply[targetoriginal] = null;
+	IgniteTargetEffect(target);
+	return Plugin_Continue;
+}
 public Action IgniteTimerVisual(Handle timer, DataPack pack)
 {
 	pack.Reset();
@@ -10620,6 +10654,11 @@ public Action IgniteTimerVisual(Handle timer, DataPack pack)
 	{
 		if (IsValidClient(client))
 		{
+			//extinquish shortly.
+			if(Reapply_BurningCorpse[target] < GetGameTime())
+			{
+				IngiteTargetClientside(target, client, false);
+			}
 			if(b_FirstPersonUsesWorldModel[client])
 			{
 				//always ignited.
@@ -10696,7 +10735,7 @@ void IngiteTargetClientside(int target, int client, bool ingite)
 	if(ingite && !ClientHasSetFire[target][client])
 	{
 		ClientHasSetFire[target][client] = true;
-		TE_SetupParticleEffect("burningplayer_red", PATTACH_ABSORIGIN_FOLLOW, target);
+		TE_SetupParticleEffect("burningplayer_corpse", PATTACH_ABSORIGIN_FOLLOW, target);
 		TE_WriteNum("m_bControlPoint1", target);	
 		TE_SendToClient(client);
 	}
@@ -10708,26 +10747,34 @@ void IngiteTargetClientside(int target, int client, bool ingite)
 		if(target > 0)
 			TE_WriteNum("entindex", target);
 		
-		TE_WriteNum("m_nHitBox", GetParticleEffectIndex("burningplayer_red"));
+		TE_WriteNum("m_nHitBox", GetParticleEffectIndex("burningplayer_corpse"));
 		TE_WriteNum("m_iEffectName", GetEffectIndex("ParticleEffectStop"));
 		TE_SendToClient(client);	
 	}
 
 }
-void ExtinguishTarget(int target)
+void ExtinguishTarget(int target, bool dontkillTimer = false)
 {
 	TE_Start("EffectDispatch");
 	
 	if(target > 0)
 		TE_WriteNum("entindex", target);
 	
-	TE_WriteNum("m_nHitBox", GetParticleEffectIndex("burningplayer_red"));
+	TE_WriteNum("m_nHitBox", GetParticleEffectIndex("burningplayer_corpse"));
 	TE_WriteNum("m_iEffectName", GetEffectIndex("ParticleEffectStop"));
 	TE_SendToAll();
 	if(Timer_Ingition_Settings[target] != null)
 	{
 		delete Timer_Ingition_Settings[target];
 		Timer_Ingition_Settings[target] = null;
+	}
+	if(!dontkillTimer)
+	{
+		if(Timer_Ingition_ReApply[target] != null)
+		{
+			delete Timer_Ingition_ReApply[target];
+			Timer_Ingition_ReApply[target] = null;
+		}	
 	}
 }
 

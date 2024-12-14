@@ -1046,7 +1046,7 @@ public Action NPC_OnTakeDamage(int victim, int &attacker, int &inflictor, float 
 	}
 	//LogEntryInvicibleTest(victim, attacker, damage, 2);
 	// if your damage is higher then a million, we give up and let it through, theres multiple reasons why, mainly slaying.
-	if(b_NpcIsInvulnerable[victim] && damage < 9999999.9)
+	if(b_NpcIsInvulnerable[victim]/* && damage < 9999999.9*/)
 	{
 		damage = 0.0;
 		Damageaftercalc = 0.0;
@@ -1076,7 +1076,7 @@ public Action NPC_OnTakeDamage(int victim, int &attacker, int &inflictor, float 
 		return Plugin_Handled;
 		//nothing happens.
 	}
-	else if(damage < 9999999.9)
+	else/* if(damage < 9999999.9)*/
 	{
 		if(Damage_Modifiy(victim, attacker, inflictor, damage, damagetype, weapon, damageForce, damagePosition, damagecustom))
 		{
@@ -1190,6 +1190,16 @@ public void NPC_OnTakeDamage_Post(int victim, int attacker, int inflictor, float
 	{
 		GiveRageOnDamage(attacker, Damageaftercalc);
 		Calculate_And_Display_hp(attacker, victim, Damageaftercalc, false);	
+	}
+	else
+	{
+		float damageCalc = Damageaftercalc;
+		int Health = GetEntProp(victim, Prop_Data, "m_iHealth");
+		if(Health <= 0)
+		{
+			damageCalc += Health;
+		}
+		Damage_dealt_in_total[attacker] += damageCalc;
 	}
 	OnPostAttackUniqueWeapon(attacker, victim, weapon, i_HexCustomDamageTypes[victim]);
 #endif
@@ -1812,7 +1822,7 @@ stock bool Calculate_And_Display_HP_Hud(int attacker)
 			Timer_Show = 0.0;
 
 		//if raid is on red, dont do timer.
-		if(Timer_Show > 800.0 || GetTeam(EntRefToEntIndex(RaidBossActive)) == TFTeam_Red)
+		if(Timer_Show > 800.0/* || GetTeam(EntRefToEntIndex(RaidBossActive)) == TFTeam_Red*/)
 		{
 			RaidModeTime = 99999999.9;
 		}
@@ -2371,6 +2381,10 @@ void OnKillUniqueWeapon(int attacker, int weapon, int victim)
 		case WEAPON_WRATHFUL_BLADE:
 		{
 			WrathfulBlade_OnKill(attacker, victim);
+		}
+		case WEAPON_CASTLEBREAKER:
+		{
+			CastleBreakerCashOnKill(attacker);
 		}
 	}
 }
