@@ -439,6 +439,7 @@
 	"Tommygun Desc"
 	{
 		"en"		"-While equipped and in your hand, take 20％ less ranged damage."
+		"ru"		"-Пока вы держите это оружие в руках вы получаете на 20% меньше дальновидного урона."
 		"fr"		"20％ de résistance contre les dégats par les sources distantes quand actif"
 		"it"		"Quando è equipaggiato e in mano, subisce 20％ danni a distanza in meno."
 		"ko"		"이 무기를 들고 있으면 원거리 피해 저항력 20％ 증가."
@@ -447,7 +448,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed"
 		"fr"		"Dégats et cadence de tir améliorés."
-		"ru"		"Увеличенный урон и скорость атаки."
+		"ru"		"-Увеличен урон\n-Увеличена скорострельность."
 		"chi"       "增加伤害和攻击速度。"
 		"it"		"Aumento dei danni e della velocità d'attacco"
 		"ko"		"피해량, 공격 속도 증가."
@@ -456,7 +457,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed"
 		"fr"		"Dégats et cadence de tir améliorés."
-		"ru"		"Увеличенный урон и скорость атаки."
+		"ru"		"-Увеличен урон\n-Увеличена скорострельность."
 		"chi"       "增加伤害和攻击速度。"
 		"it"		"Aumento dei danni e della velocità d'attacco"
 		"ko"		"피해량, 공격 속도 증가."
@@ -465,7 +466,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed"
 		"fr"		"Dégats et cadence de tir améliorés."
-		"ru"		"Увеличенный урон и скорость атаки."
+		"ru"		"-Увеличен урон\n-Увеличена скорострельность."
 		"chi"       "增加伤害和攻击速度。"
 		"it"		"Aumento dei danni e della velocità d'attacco"
 		"ko"		"피해량, 공격 속도 증가."
@@ -474,18 +475,20 @@
 	"Annabelle Desc"
 	{
 		"en"		"-Provides an extra 10％ Resistance to all sources while active."
+		"ru"		"-Пока в руках даёт 10% сопротивления ко всему урону."
 		"ko"		"활성화 중 모든 피해에 대해 10％ 추가 저항을 제공함."
 	}
 	"Double Barrel Shotgun Desc"
 	{
 		"en"		"-Provides an extra 10％ Resistance to all sources while active."
+		"ru"		"-Пока в руках даёт 10% сопротивления ко всему урону."
 		"ko"		"활성화 중 모든 유형의 피해에 10％ 추가 저항을 제공함."
 	}
 	"Double Barrel Shotgun Pap 1"
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-Increased reloadspeed"
 		"fr"		"Dégats, cadence de tir et vitesse de rechargement améliorés"
-		"ru"		"Увеличенный урон и немного более высокая скорости атаки и скорость перезарядки."
+		"ru"		"-Урон увеличен\n-Увеличена Скорострельность\n-Скорость перезарядки теперь быстрее"
 		"chi"       "增加伤害和攻击速度，每次射击增加额外子弹。"
 		"it"		"Aumento dei danni e velocità di attacco e di ricarica leggermente più rapida"
 		"ko"		"피해량, 공격 속도, 재장전 속도가 조금 증가."
@@ -493,6 +496,7 @@
 	"Double Barrel Shotgun Pap 2"
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-Increased reloadspeed\n-Gets 2 clip size"
+		"ru"		"-Урон Увеличен\n-Увеличена Скорострельность\n-Более быстрая перезарядка\n-Увеличена ёмкость магазина на 2."
 		"it"		"Aumento dei danni e della velocità di attacco, velocità di ricarica e 2 caricatori, il che significa che si può sparare due volte."
 		"ko"		"피해량, 공격 속도, 재장전 속도 증가 및 장탄수가 2발이 됨. (한 번에 2번 사격할 수 있음)"
 	}
@@ -501,7 +505,7 @@
 	{
 		"en"		"-Increased damage\n-Increased reloadspeed"
 		"fr"		"Dégats et cadence de tir améliorés"
-		"ru"		"Увеличенный урон и скорости перезарядки."
+		"ru"		"-Урон увеличен\n-Более быстрая перезарядка."
 		"chi"       "增加伤害和装填速度"
 		"it"		"Aumento del danno e della velocità di ricarica"
 		"ko"		"피해량, 재장전 속도 증가."
@@ -509,6 +513,7 @@
 	"RPG Pap 2"
 	{
 		"en"		"-Increased damage\n-gain 3 extra clipsize\n-Increased reload speed\n-Only hits 4 enemies now instead of 10"
+		"ru"		"-Урон Увеличен\n-Количество снарядов в обойме увеличено на 3\n-Быстрее перезарядка\n-Теперь только бьёт максимум по 4 целям вместо 10"
 		"fr"		"Dégats et vitesse de rechargement améliorés. +3 capacité chargeur.\nFrappe seulement 4 ennemis à la fois au lieu de 10."
 		"it"		"Aumento del danno, guadagno di 3 caricatori extra, ricarica più rapida.\nOra colpisce solo 4 nemici invece di 10"
 		"ko"		"피해량, 재장전 속도 증가 및 장탄수가 3발 증가. 이제 한 번에 10명이 아닌 4명의 적만 공격할 수 있음."
@@ -516,6 +521,7 @@
 	"RPG Pap 3"
 	{
 		"en"		"-Massively Increased damage\n-Reduced reload speed\n-Has better enemy pierce"
+		"ru"		"-Урон Увеличен Многократно\n-Скорость перезарядки медленее\n-Теперь лучше пробивает толпу врагов."
 		"fr"		"Dégats et vitesse de rechargement améliorés.\nFrappe plus d'ennemis à la fois."
 		"it"		"Danno enormemente aumentato e velocità di ricarica RIDOTTA.\nE ha una migliore perforazione del nemico"
 		"ko"		"피해량, 재장전 속도가 크게 증가. \n적 관통 횟수가 더욱 증가."
@@ -524,6 +530,7 @@
 	"The Pomson 7000 Desc"
 	{
 		"en"		"-Massively increased clipsize\n-slower reload\n-Increased attackspeed\n-Increased damage"
+		"ru"		"-Ёмкость магазина Массивно увеличена\n-медленее перезарядка\n-Скорострельность увеличена\n-Урон Увеличен"
 		"it"		"Dimensione del caricatore aumentata in modo massiccio, ricarica più lenta, velocità d'attacco più elevata e più danni."
 		"ko"		"기존보다 장탄수가 늘어나고 공격 속도가 빨라지며 피해량도 증가했지만 재장전 속도가 느려짐."
 	}
@@ -531,7 +538,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed"
 		"fr"		"Dégats et cadence de tir améliorés"
-		"ru"		"Увеличенный урон и скорость атаки."
+		"ru"		"-Урон Увеличен\n-Скорострельность повышена"
 		"chi"       "增加伤害和攻击速度。"
 		"it"		"Aumento dei danni e della velocità d'attacco"
 		"ko"		"피해량, 공격 속도 증가."
