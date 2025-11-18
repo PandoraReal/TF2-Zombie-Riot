@@ -9,12 +9,14 @@
 	"Describe This Weapon"
 	{
 		"en"	"Describe This Weapon"
+		"ru"	"Опишите Это Оружие"
 		"it"	"Descrivi quest'arma"
 		"ko"	"이 무기의 설명"
 	}
 	"Artillery"
 	{
 		"en"	"Artillery"
+		"ru"	"Артилерия"
 		"ko"	"포병"
 		"it"	"Artiglieria"
 	}
@@ -33,120 +35,140 @@
 	"Tactician"
 	{
 		"en"	"Tactician"
+		"ru"	"Тактик"
 		"ko"	"전술가"
 		"it"	"Tattico"
 	}
 	"Hunter"
 	{
 		"en"	"Hunter"
+		"ru"	"Охотник"
 		"ko"	"헌터"
 		"it"	"Cacciatore"
 	}
 	"Drone Magic"
 	{
 		"en"	"Drone Magic"
+		"ru"	"Магия Дронов"
 		"ko"	"드론 마법"
 		"it"	"Magia dei droni"
 	}
 	"Splash Magic"
 	{
 		"en"	"Splash Magic"
+		"ru"	"Магия по области"
 		"ko"	"범위 마법"
 		"it"	"Magia Splash"
 	}
 	"Rapid Magic"
 	{
 		"en"	"Rapid Magic"
+		"ru"	"Скоростная Магия"
 		"ko"	"속사 마법"
 		"it"	"Magia rapida"
 	}
 	"Power Magic"
 	{
 		"en"	"Power Magic"
+		"ru"	"Сильная Магия"
 		"ko"	"강타 마법"
 		"it"	"Magia del potere"
 	}
 	"Hexing Magic"
 	{
 		"en"	"Hexing Magic"
+		"ru"	"Магия Сглаза"
 		"ko"	"핵싱 마법"
 		"it"	"Magia dell'esagono"
 	}
 	"Ambusher"
 	{
 		"en"	"Ambusher"
+		"ru"	"Партизан"
 		"ko"	"매복자"
 		"it"	"Agguatore"
 	}
 	"Duelist"
 	{
 		"en"	"Duelist"
+		"ru"	"Дуэлист"
 		"ko"	"듀얼리스트"
 		"it"	"Duellante"
 	}
 	"Defender"
 	{
 		"en"	"Defender"
+		"ru"	"Защитник"
 		"ko"	"디펜더"
 		"it"	"Difensore"
 	}
 	"Lord"
 	{
 		"en"	"Lord"
+		"ru"	"Лорд"
 		"ko"	"로드"
 		"it"	"Signore"
 	}
 	"Crusher"
 	{
 		"en"	"Crusher"
+		"ru"	"Крушитель"
 		"ko"	"파쇄자"
 		"it"	"Frantoio"
 	}
 	"Combatant"
 	{
 		"en"	"Combatant"
+		"ru"	"Боец"
 		"ko"	"전투원"
 		"it"	"Combattente"
 	}
 	"Medical"
 	{
 		"en"	"Medical"
+		"ru"	"Медицинское"
 		"ko"	"의사"
 		"it"	"Medico"
 	}
 	"Mechanic"
 	{
 		"en"	"Mechanic"
+		"ru"	"Механик"
 		"ko"	"메카닉"
 		"it"	"Meccanico"
 	}
 	"Buffer"
 	{
 		"en"	"Buffer"
+		"ru"	"Воодушивитель"
 		"ko"	"버퍼"
 		"it"	"Buffer"
 	}
 	"Debuffer"
 	{
 		"en"	"Debuffer"
+		"ru"	"Ослабляющий"
 		"ko"	"디버퍼"
 		"it"	"Debuffer"
 	}
 	"Expidonsa"
 	{
 		"en"	"Expidonsa"
+		"ru"	"Экспидонса"
 		"ko"	"엑스피돈산"
 		"it"	"Expidonsa"
 	}
 	"Kazimierz"
 	{
 		"en"	"Kazimierz"
+		"ru"	"Казимерз"
 		"ko"	"카시미어"
 		"it"	"Kazimierz"
 	}
 	"Victoria"
 	{
 		"en"	"Victoria"
+		"ru"	"Виктория"
 		"ko"	"빅토리아"
 		"it"	"Victoria"
 	}
@@ -159,6 +181,7 @@
 	"Seaborn"
 	{
 		"en"	"Seaborn"
+		"ru"	"МореРождённые"
 		"ko"	"시본"
 		"it"	"Seaborn"
 	}
@@ -167,12 +190,14 @@
 	"Syringe Gun Desc"
 	{
 		"en"		"Low Damage but very high bleed duration\n-Deals 15％ less damage against raids."
+ё		"ru"		"Низкий Урон но наносит Очень длительное Кровоточение\nНаносит на 15% меньше урона Рейд Боссам."
 		"it"		"Danno basso, ma durata del sanguinamento molto elevata\nFa 15％ danni in meno contro le incursioni."
 		"ko"		"피해량이 낮지만 출혈 지속 시간이 매우 깁니다.\n레이드 모드일시 피해량이 15％ 감소합니다."
 	}
 	"Syringe Gun Pap 1 Desc"
 	{
 		"en"		"-Increased damage\n-Increased attackspeed"
+		"ru"		"-Увеличен Урон\n-Увеличена скорострельность"
 		"fr"		"Dégats et cadence de tir améliorés"
 		"ru"		"Увеличенный урон и скорость атаки."
 		"chi"       "增加伤害和攻击速度"
@@ -182,6 +207,7 @@
 	"Syringe Gun Pap 2 Desc"
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-Your syringes land instantly where you shoot (hitscan)\n-cannot headshot\n-Less ammo usage."
+		"ru"		"-Увеличен Урон\n-Увеличена скорострельность\n-Иглы теперь попадают мгновенно туда куда вы стреляете(Хитскан)\n-Не может наносить доп. урон по голове\n-Использует меньше патрон."
 		"it"		"Aumento del danno e della velocità d'attacco Le siringhe atterrano istantaneamente nel punto in cui si spara (hitcan)\nMa non si può sparare alla testa"
 		"ko"		"피해량, 공격 속도 증가\n이제 히트스캔형 공격 방식이 됩니다. 하지만 헤드샷이 불가능합니다.\n탄약 소모량 감소."
 	}
@@ -190,7 +216,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-consumes 2 bullets per shot."
 		"fr"		"Dégats et cadence de tir améliorés, 2 balles utilisées par tir"
-		"ru"		"Увеличенный урон и скорость атаки, расходует 2 пули за выстрел."
+		"ru"		"-Увеличенный урон\n-скорость атаки\n-расходует 2 пули за выстрел."
 		"chi"       "增加伤害和攻击速度，每次射击消耗2发子弹。"
 		"it"		"Aumenta i danni e la velocità d'attacco, consuma 2 proiettili per colpo."
 		"ko"		"피해량, 공격 속도 증가. 발사당 2발의 탄약을 소모."
@@ -199,7 +225,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-Scoping isn't needed anymore but attacks are delayed."
 		"fr"		"Dégats et cadence de tir améliorés, le zoom n'est plus requis, mais les tirs seront retardés"
-		"ru"		"Увеличенный урон и скорость атаки, прицеливание больше не нужно, но атаки имеют задержку."
+		"ru"		"-Увеличен Урон\n-Увеличена Скорострельность\n-Прицеливание больше не нужно но стреляет с задержкой."
 		"chi"       "增加伤害和攻击速度，增大攻击范围，但换弹速度加长"
 		"it"		"Aumenta il danno e la velocità d'attacco, non è più necessaria la mira, ma gli attacchi sono ritardati."
 		"ko"		"피해량, 공격 속도 증가. 줌이 필요 없어지지만 공격에 딜레이가 발생."
@@ -207,14 +233,15 @@
 	"Sniper Rifle Pap 3"
 	{
 		"en"		"-Massively Increased damage\n-Deals extreme damage to any enemy not hit by your rifle within 40 seconds!"
+		"ru"		"-Урон увеличен многократно\n-Наносит Экстримальный урон любому врагу в которого вы не стреляли больше 40 секунд!"
 		"it"		"Costoso Super Upgrade, 5 proiettili in una volta per un danno estremo.\nAlcuni occhiali possono aumentare ulteriormente il danno quando sono completamente carichi.\nDanneggia in modo estremo qualsiasi nemico non colpito dal tuo fucile entro 40 secondi!"
 		"ko"		"발사되는 탄환 수가 5발로 증가.\n특정 고글과 조합하면 풀충전시 피해량 증가.\n40초 내로 당신의 저격소총에 맞지 않은 적에게 높은 추가 피해를 입힘."
 	}
 	"Sniper Rifle Pap 4"
 	{
 		"en"		"-Massively Increased damage\n-Increased attackspeed"
+		"ru"		"-Многократно увеличен урон\n-Увеличена скорострельность"
 		"fr"		"Dégats et cadence de tir améliorés"
-		"ru"		"Сильно Увеличенный урон и скорость атаки."
 		"chi"       "大幅增加伤害和攻击速度"
 		"it"		"Danno e velocità d'attacco fortemente aumentati"
 		"ko"		"피해량, 공격 속도가 크게 증가"
@@ -224,7 +251,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-Extra Clip size\n-Increased reload Speed"
 		"fr"		"Dégats et cadence de tir améliorés, capacité de munitions augmuntée"
-		"ru"		"Увелич. урон и скорость атаки, а также доп. патроны."
+		"ru"		"-Увеличен урон\n-Увеличена скорострельность\n-Больше ёмкость магазина\n-Перезаряка теперь быстрее"
 		"chi"       "增加伤害和攻击速度和额外的弹药。"
 		"it"		"Aumento dei danni e della velocità d'attacco e munizioni extra."
 		"ko"		"피해량, 공격 속도, 장탄수 증가."
@@ -233,7 +260,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-Increased reload Speed"
 		"fr"		"Dégats et cadence de tir améliorés"
-		"ru"		"Увеличенный урон и скорость атаки."
+		"ru"		"-Увеличен урон\n-Увеличена Скорость атаки\n-Перезарядка теперь ещё быстрее"
 		"chi"       "增加伤害和攻击速度"
 		"it"		"Aumento dei danni e della velocità d'attacco."
 		"ko"		"피해량, 공격 속도 증가."
@@ -242,7 +269,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-Extra Clip size\n-Increased reload Speed"
 		"fr"		"Dégats et cadence de tir améliorés, capacité de munitions augmuntée"
-		"ru"		"Увелич. урон и скорость атаки, а также доп. патроны."
+		"ru"		"-Увеличен Урон\n-Увеличена скорострельность\n-Больше ёмкость магазина\n-Перезарядка теперь быстрее"
 		"chi"       "增加伤害和攻击速度和额外的弹药。"
 		"it"		"Aumento dei danni e della velocità d'attacco e munizioni extra."
 		"ko"		"피해량, 공격 속도, 장탄수 증가."
@@ -251,7 +278,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-Extra Clip size\n-Increased reload Speed"
 		"fr"		"Dégats et cadence de tir améliorés, capacité de munitions augmuntée"
-		"ru"		"Увелич. урон и скорость атаки, а также доп. патроны."
+		"ru"		"-Увеличен Урон\n-Увеличена скорострельность\n-Больше ёмкость магазина\n-Перезарядка теперь быстрее"
 		"chi"       "增加伤害和攻击速度和额外的弹药。"
 		"it"		"Aumento dei danni e della velocità d'attacco e munizioni extra."
 		"ko"		"피해량, 공격 속도, 장탄수 증가."
@@ -261,7 +288,7 @@
 	{
 		"en"		"Can headshot.\n-Press M2 To fire a barrage"
 		"fr"		"Les Tirs en Pleine Tête sont possibles. Appuyez sur M2 pour un barrage de flèches"
-		"ru"		"Может стрелять в голову. Нажмите M2, чтобы открыть шквальный огонь."
+		"ru"		"При выстреле в голову наносит больше урона\n-Нажмите ПКМ что бы выстрелить очередью."
 		"chi"       "可以造成爆头伤害！按下M2键发射多个弓箭"
 		"it"		"Può sparare alla testa. Premere M2 Per sparare una raffica"
 		"ko"		"헤드샷이 가능합니다. 우클릭으로 화살 세례 능력을 사용 가능."
@@ -270,7 +297,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\nM2 ability is stronger"
 		"fr"		"Dégats et cadence de tir améliorés, barrage amélioré"
-		"ru"		"Увеличенный урон и скорость атаки, усилена способность М2."
+		"ru"		"-Увеличенный урон\n-скорость атаки\n-усилена способность ПКМ."
 		"chi"       "增加伤害和攻击速度，加强右键技能。"
 		"it"		"Danno e velocità d'attacco aumentati, abilità m2 potenziate."
 		"ko"		"피해량, 공격 속도 증가. 우클릭 능력 강화."
@@ -279,7 +306,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\nM2 ability is stronger\n-Base attack shoots 3 arrows."
 		"fr"		"Dégats et cadence de tir améliorés, barrage amélioré\nLes attaques réguliers tirent 3 flèches"
-		"ru"		"Увеличенный урон и скорость атаки, усиление способности на М2.\nСтреляет 3-я стрелами (обычная)."
+		"ru"		"-Увеличенный урон\n-скорость атаки\n-усилена способность ПКМ.\n-Базоваый Выстрел теперь стреляет 3 стрелы за раз."
 		"chi"       "增加伤害和攻击速度，加强右键技能。普通攻击现可发射3支箭。"
 		"it"		"Danno e velocità d'attacco aumentati, abilità m2 potenziata. L'attacco base ora scocca 3 frecce."
 		"ko"		"피해량, 공격 속도 증가. 우클릭 능력 강화.\n기본 공격이 이제 한 번에 3발을 발사."
@@ -288,6 +315,7 @@
 	"Huntsman Pap 3"
 	{
 		"en"		"-Increased damage\n-Increased attackspeed"
+		"ru"		"-Увеличен урон\n-Скорострельность увеличена"
 		"fr"		"Dégats et cadence de tir améliorés"
 		"chi"		"增加伤害和攻速。"
 		"it"		"Aumento dei danni e della velocità d'attacco."
@@ -297,42 +325,49 @@
 	"Deagle Desc"
 	{
 		"en"		"Deagle that throws objects with m2, shoot them to deal even more damage.\n-Time correctly after a blue flash, and throw multiple for even more damage.\n-This projectile always counts as a HEADSHOT.\n-Has less damage falloff."
+		"ru"		"Пустнный Орёл который может кидать объекты на ПКМ,Стрельба в них наносит Больше урона.\n-Нужно попасть в промежуток после Синей вспышки и можно подкинуть сразу несколько, Это повысит Урон.\n-Этот Снаряд Всегда считаеться как выстрел в голову\n-Меньше Падения урона с расстояния."
 		"it"		"Deagle che lancia oggetti con m2, sparateli per infliggere ancora più danni.\nTemporizzate correttamente dopo un lampo blu e lanciate più oggetti per infliggere ancora più danni.\nQuesto proiettile conta sempre come un COLPO ALLA TESTA.\nHa una caduta dei danni inferiore."
 		"ko"		"M2로 포물선형 물체를 투척. 물체를 쏴서 맞추면 추가 피해.\n물체에 파란 섬광이 발생한 후에 쏴맞추면 피해량 증가.\n이 물체는 항상 헤드샷 판정임.\n거리 비례 피해 감소량이 적음."
 	}
 	"Deagle Pap 1"
 	{
 		"en"		"-Increased damage\n-m2 ability buffed gains one extra throwable.\n-You will now always gib."
+		"ru"		"-Увеличен Урон.\n-Способность на ПКМ усилена и получена ещё одна монетка.\n-При убийстве Враги всегда распадаються на части."
 		"it"		"Aumenta il danno, l'abilità m2 potenziata guadagna una lanciabile in più."
 		"ko"		"피해량 증가 및 물체 투척량이 1개 더 증가.\n처치시, 적의 시체가 산산조각납니다."
 	}
 	"Sherrif Pap 1"
 	{
 		"en"		"-Slgihtly Increased Damage,\n-Weapon changes:\nM2 now marks upto 5 enemies near you, hitting them deals 3x damage once.\nYour revolver turns into a burst 6 shot weapon."
+		"ru"		"-Немного Усилен Урон\n-Оружие меняеться\n-ПКМ теперь метит до 5 врагов рядом с вами, следущий выстрел по ним наносит в 3 раза больше урона.\n-Ваш револьер теперь очень быстро стреляет."
 		"it"		"Danno leggermente aumentato, modifiche alle armi.\nM2 ora contrassegna fino a 5 nemici vicini, colpirli infligge danni 3x una volta.\nIl tuo revolver si trasforma in un'arma a raffica a 6 colpi."
 		"ko"		"무기 변경:\nM2: 이제 주변의 최대 5명의 적에게 표적을 부여. 이 무기로 표적이 부여된 적에게 주는 피해량 3배 증가.\n리볼버가 6연발 연사로 변경."
 	}
 	"Sherrif Pap 2"
 	{
 		"en"		"-Increased Damage\n-M2 has a shorter cooldown."
+		"ru"		"-Увеличен Урон\n-Перезарядка способности уменьшена."
 		"it"		"Aumento del Danno\nM2 ha un cooldown più breve."
 		"ko"		"피해량 증가\nM2 쿨타임 감소."
 	}
 	"Sherrif Pap 3"
 	{
 		"en"		"-Increased Damage\n-R Ability Allows you to get your Lever-action.\n-Its limited ammo, and also benifits from the same m2 bonus if you wish to combine it.\n-Semifire is much faster then holding m1.\n-It deals explosive damage.\n-Hitting marked targets with your revolver reduces R Cooldown."
+		"ru"		"-Увеличен Урон\n-Новая способность на R Давая вам рычажное действие.\n-Лимитировенник количество патрон и получает теже бонусы от способности на ПКМ если вы хотите их совместить."
 		"it"		"Potere Aumento del Danno consente di ottenere l'azione a leva.\nLe munizioni sono limitate e beneficiano anche dello stesso bonus di m2 se si desidera combinarle.\nIl fuoco è molto più veloce rispetto all'uso di m1.\nEffettua danni esplosivi.\nColpire bersagli marcati con il revolver riduce la durata della R."
 		"ko"		"R: 레버 액션으로 전환.\n탄약은 한정되어있으며, M2 능력과 조합 가능.\n반자동시 M1를 연타하는게 더 빠름.\n폭발 피해를 가함.\n리볼버로 표적이 부여된 적 타격시 R 쿨타임 감소."
 	}
 	"Deagle Pap 2"
 	{
 		"en"		"-Increased damage\n-m2 ability buffed gains one extra throwable.\n-2 bullets per shot consumed."
+		"ru"		"-Увеличен урон\n-ПКМ усилена и получена ещё одна монетка.\n-Потребляет 2 патрона за выстрел."
 		"it"		"Aumento dei danni, l'abilità m2 potenziata guadagna una lanciabile in più.\n2 proiettili per colpo consumati."
 		"ko"		"피해량 증가 및 물체 투척량이 1개 더 증가.\n탄약 소모량이 발당 2발로 증가."
 	}
 	"Deagle Pap 3"
 	{
 		"en"		"-Increased damage\n-m2 ability buffed gains one extra throwable.\n-2 bullets per shot consumed."
+		"ru"		"-Увеличен урон\n-ПКМ усилена и получена ещё одна монетка.\n-Потребляет 2 патрона за выстрел."
 		"it"		"Aumento dei danni, l'abilità m2 potenziata guadagna una lanciabile in più.\n2 proiettili per colpo consumati."
 		"ko"		"피해량 증가 및 물체 투척량이 1개 더 증가.\n탄약 소모량이 발당 2발로 증가."
 	}
@@ -340,18 +375,21 @@
 	"Flamethrower Pap 1"
 	{
 		"en"		"-Increased damage\n-Increased Resistances\n-M2 ability gives minicrits and uber for a short time\n-Gain additional 10％ Extra Range"
+		"ru"		"-Увеличен Урон\n-Увеличены сопротелвения урону\n-ПКМ даёт мини-криты и убер на небольшое время\n-Дальность огня увеличена на 10%"
 		"it"		"Aumenta i danni e le resistenze. L'abilità M2 conferisce minicrits e uber per un breve periodo.\nDanno 1,15x contro i raidboss.\nGuadagna un ulteriore 10％ di portata extra"
 		"ko"		"피해량과 저항력 증가. M2 사용시 짧은 시간 동안 무적 및 소형 치명타 효과를 얻음.\n레이드 보스에게 주는 피해량 +1.15배.\n공격 사거리 10％ 증가"
 	}
 	"Flamethrower Pap 1 1"
 	{
 		"en"		"-Increased damage\n-Increased Resistances\n-Gain additional 10％ Extra Range"
+		"ru"		"-Увеличен Урон\n-Увеличены сопротелвения урону\n-Дальность огня увеличена на 10%"
 		"it"		"Aumenta i danni e le resistenze.\nDanneggia 1,15x i raidboss.\nGuadagna 10％ extra di portata"
 		"ko"		"피해량과 저항력 증가.\n레이드 보스에게 주는 피해량 +1.15배.\n공격 사거리 10％ 증가"
 	}
 	"Flamethrower Pap 2"
 	{
 		"en"		"-Increased damage\n-Increased Resistances\n-Gain additional 10％ Extra Range"
+		"ru"		"-Увеличен Урон\n-Увеличены сопротелвения урону\n-Дальность огня увеличена на 10%"
 		"it"		"Aumenta i danni e le resistenze.\nDanneggia 1,15x i raidboss.\nGuadagna 10％ extra di portata"
 		"ko"		"피해량과 저항력 증가.\n레이드 보스에게 주는 피해량 +1.15배.\n공격 사거리 10％ 증가"
 	}
@@ -360,7 +398,7 @@
 	{
 		"en"		"Semi automatic shotgun, you cannot hold down to shoot.\n-More powerful but harder to use since its single fire nature and poor accuracy\n-Provides an extra 10％ Resistance to all sources while active."
 		"fr"		"Fusil à pompe semi-automatique, vous ne pouvez pas maintenir la détente pour tirer.\nDégats sont améliorés en échange d'une déviation plus grande."
-		"ru"		"Полуавт. дробовик, для стрельбы из которого нельзя удерживать нажатой клавишу.\nМощнее, стреляет одиночными выстрелами и имеет низкую точность."
+		"ru"		"Полуатоматический Дробовик,Нужно нажимать кнопку выстрела.\n-Мощный но сложный в использовании.\n-Даёт 10% сопротивления урону пока в руках."
 		"chi"       "半自动霰弹枪，你不能按住射击。虽然强大，但因为它的单一火力性质和较差的准确性，使它更难使用"
 		"it"		"Fucile semiautomatico, non si può tenere premuto per sparare.\nPiù potente ma più difficile da usare per la sua natura a fuoco singolo e la scarsa precisione"
 		"ko"		"반자동 산탄총. 이 무기는 꾹 눌러서 사격할 수 없음.\n강력하지만 명중률이 낮아 다루기 어렵습니다."
@@ -369,7 +407,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-much tighter spread."
 		"fr"		"Dégats et cadence de tir améliorés, déviation réduite."
-		"ru"		"Увеличенный урон и скорость атаки, гораздо более плотный разброс."
+		"ru"		"-Увеличен урон\n-Увеличена Скорострельность\n-гораздо более Узкий разброс."
 		"chi"       "增加伤害和攻击速度，子弹扩散减少。"
 		"it"		"Aumento dei danni e della velocità d'attacco, diffusione molto più stretta."
 		"ko"		"피해량, 공격 속도, 집탄도 증가."
@@ -379,7 +417,7 @@
 	{
 		"en"		"-Increased damage\n-Increased attackspeed"
 		"fr"		"Dégats et cadence de tir améliorés."
-		"ru"		"Увеличенный урон и скорость атаки."
+		"ru"		"-Увеличен урон\n-Увеличена скорострельность."
 		"chi"       "增加伤害和攻击速度。"
 		"it"		"Aumento dei danni e della velocità d'attacco."
 		"ko"		"피해량, 공격 속도 증가."
@@ -387,12 +425,14 @@
 	"Grenade Launcher Pap 2"
 	{
 		"en"		"-Massively Increased attackspeed\n-Massively Increased reloadspeed\n-Increased clipsize\n-Slightly increased damage\n-Now deals 2x dmg against raids.\n-Explodes on contact now."
+		"ru"		"-Скорострельность многократно увеличена\n-Скорость перезарядки так же увеличена\n-Ёмкость магазина больше\n-Немного увеличен урон\n-Теперь наносит двойной урон по рейд боссам\n-Взрываеться при удари об что-либо."
 		"it"		"Danno ridotto ma velocità d'attacco e velocità di ricarica più elevate.\nOra infligge 2 volte i danni contro i raid.\nOra esplode al contatto."
 		"ko"		"피해량이 감소하지만 공격 속도, 재장전 속도가 증가.\n레이드 보스에게 주는 피해량 +2배.\n이제 유탄이 벽이나 지면에 닿는 즉시 폭발."
 	}
 	"Grenade Launcher Pap 3"
 	{
 		"en"		"-Increased damage\n-Increased attackspeed\n-Increased reloadspeed\n-Increased clipsize"
+		"ru"		"-Увеличен Урон\n-Скорострельность увеличена\n-Увеличена скорость перезарядка\n-Больше ёмкость магазина"
 		"it"		"Danno leggermente aumentato e velocità d'attacco e di ricarica massicciamente incrementata.\nOra infligge 2 volte i danni contro i raid."
 		"ko"		"피해량이 감소하지만 공격 속도, 재장전 속도가 크게 증가.\n레이드 보스에게 주는 피해량 +2배."
 	}
