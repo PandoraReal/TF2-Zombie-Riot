@@ -260,6 +260,7 @@ methodmap FallenWarrior < CClotBody
 		}
 		npc.m_bDissapearOnDeath = true;
 
+		b_thisNpcIsAMiniboss[npc.index] = true;
 		float wave = float(Waves_GetRoundScale()+1);
 		wave *= 0.133333;
 		npc.m_flWaveScale = wave;
@@ -270,6 +271,11 @@ methodmap FallenWarrior < CClotBody
 		Citizen_MiniBossSpawn();
 		return npc;
 	}
+}
+
+static void NPCTalkMessage(int iNPC, const char[] message)
+{
+	PrintNPCMessageWithPrefixes(iNPC, "crimson", message, .customName = "Guln");
 }
 
 public void FallenWarrior_ClotThink(int iNPC)
@@ -344,7 +350,7 @@ public void FallenWarrior_ClotThink(int iNPC)
 				i_fallen_eyeparticle[npc.index] = EntIndexToEntRef(ParticleEffectAt_Parent(flPos, "unusual_psychic_eye_white_glow", npc.index, "head", {0.0,5.0,-15.0}));
 				i_fallen_bodyparticle[npc.index] = EntIndexToEntRef(ParticleEffectAt_Parent(flPos, "env_snow_light_001", npc.index, "m_vecAbsOrigin", {50.0,-200.0,0.0}));
 
-				CPrintToChatAll("{crimson}Guln{default}: You must stop {white}Whiteflower{default}! Once and for all...");
+				NPCTalkMessage(npc.index, "You must stop {white}Whiteflower{default}! Once and for all...");
 			}
 		}
 	}
@@ -501,7 +507,7 @@ public void FallenWarrior_NPCDeath(int entity)
 
 	if(GetTeam(entity) == TFTeam_Red)
 	{
-		CPrintToChatAll("{crimson}Guln{default}: And if it comes to this... this {crimson}Chaos{default}... you know what to do...");
+		NPCTalkMessage(npc.index, "And if it comes to this... this {crimson}Chaos{default}... you know what to do...");
 	}
 	else
 	{
@@ -509,19 +515,19 @@ public void FallenWarrior_NPCDeath(int entity)
 		{
 			case 1:
 			{
-				CPrintToChatAll("{crimson}Guln{default}: Thank... you...");
+				NPCTalkMessage(npc.index, "Thank... you...");
 			}
 			case 2:
 			{
-				CPrintToChatAll("{crimson}Guln{default}: This feeling...");
+				NPCTalkMessage(npc.index, "This feeling...");
 			}
 			case 3:
 			{
-				CPrintToChatAll("{crimson}Guln{default}: Bob... My friend...");
+				NPCTalkMessage(npc.index, "Bob... My friend...");
 			}
 			case 4:
 			{
-				CPrintToChatAll("{crimson}Guln{default}: Must... stop...");
+				NPCTalkMessage(npc.index, "Must... stop...");
 			}
 		}
 	}

@@ -65,6 +65,17 @@ methodmap RaidbossBladedance < CClotBody
 		public set(bool TempValueForProperty) 	{ b_FlamerToggled[this.index] = TempValueForProperty; }
 	}
 	
+	property bool m_bForceNextWave
+	{
+		public get()							{ return b_DuringHook[this.index]; }
+		public set(bool TempValueForProperty) 	{ b_DuringHook[this.index] = TempValueForProperty; }
+	}
+	property float m_flHurtForAbility
+	{
+		public get()							{ return fl_AbilityOrAttack[this.index][0]; }
+		public set(float TempValueForProperty) 	{ fl_AbilityOrAttack[this.index][0] = TempValueForProperty; }
+	}
+	
 	public void PlayIdleSound()
 	{
 		if(this.m_flNextIdleSound > GetGameTime(this.index))
@@ -141,6 +152,8 @@ methodmap RaidbossBladedance < CClotBody
 		func_NPCDeath[npc.index] = RaidbossBladedance_NPCDeath;
 		func_NPCOnTakeDamage[npc.index] = RaidbossBladedance_OnTakeDamage;
 		func_NPCThink[npc.index] = RaidbossBladedance_ClotThink;
+		func_NPCSpawnForward[npc.index] = Bladedance_AllySpawn;
+		func_NPCFuncWin[npc.index] = view_as<Function>(Raidmode_Expidonsa_Sensal_Win);
 		
 		f_ExplodeDamageVulnerabilityNpc[npc.index] = 0.7;
 
@@ -203,6 +216,7 @@ methodmap RaidbossBladedance < CClotBody
 		RaidModeScaling = 0.0;
 		RaidModeTime = GetGameTime() + ((300.0) * (1.0 + (MultiGlobalEnemy * 0.4)));
 		RaidAllowsBuildings = true;
+		RaidAllowLastman = true;
 		
 		if (npc.m_bBossRushDuo)
 		{
@@ -211,6 +225,7 @@ methodmap RaidbossBladedance < CClotBody
 			
 			GiveNpcOutLineLastOrBoss(npc.index, true);
 			RaidAllowsBuildings = false;
+			RaidAllowLastman = true;
 			RaidModeTime = GetGameTime() + 500.0;
 		}
 		else
@@ -290,12 +305,20 @@ public void RaidbossBladedance_ClotThink(int iNPC)
 		if(--npc.m_iOverlordComboAttack < 1)
 			npc.Anger = false;
 	}
+	else if(npc.m_iOverlordComboAttack > 45 && !npc.m_bForceNextWave && i_RaidGrantExtra[npc.index] == 1)
+	{
+		delete WaveTimer;
+		WaveTimer = CreateTimer(0.1, Waves_ProgressTimer);
+		npc.m_bForceNextWave = true;
+	}
 	else if(npc.m_iOverlordComboAttack > 50)
 	{
 		if(IsValidEnemy(npc.index, npc.m_iTarget))
 		{
 			npc.Anger = true;
 			
+			npc.m_bForceNextWave = false;
+
 			float vecTarget[3]; WorldSpaceCenter(npc.m_iTarget, vecTarget );
 			npc.FaceTowards(vecTarget, 30000.0);
 			
@@ -308,7 +331,7 @@ public void RaidbossBladedance_ClotThink(int iNPC)
 				case 2:
 					CPrintToChatAll("{crimson}Bladedance{default}: I god damn hate fighting, get out!");
 				case 3:
-					CPrintToChatAll("{crimson}Bladedance{default}: Wish you could lose at the casino i once owned!");
+					CPrintToChatAll("{crimson}Bladedance{default}: Wish you could lose at the casino I once owned!");
 
 			}
 			
@@ -460,6 +483,10 @@ public Action RaidbossBladedance_OnTakeDamage(int victim, int &attacker, int &in
 	{
 		npc.m_flHeadshotCooldown = gameTime + DEFAULT_HURTDELAY;
 		npc.m_blPlayHurtAnimation = true;
+	}
+	if(npc.m_flHurtForAbility < gameTime)
+	{
+		npc.m_flHurtForAbility = gameTime + DEFAULT_HURTDELAY;
 		if(!npc.Anger)
 			npc.m_iOverlordComboAttack++;
 	}
@@ -470,7 +497,7 @@ public Action RaidbossBladedance_OnTakeDamage(int victim, int &attacker, int &in
 			npc.m_flBladedanceAngerResistance = 1.0;
 			ApplyStatusEffect(npc.index, npc.index, "Very Defensive Backup", 25.0);
 			ApplyStatusEffect(npc.index, npc.index, "Godly Motivation", 40.0);
-			CPrintToChatAll("{crimson}Bladedance{default}: You have seen nothing i say! Im the least of your worries!");
+			CPrintToChatAll("{crimson}Bladedance{default}: You have seen nothing I say! I'm the least of your worries!");
 			npc.DispatchParticleEffect(npc.index, "hightower_explosion", NULL_VECTOR, NULL_VECTOR, NULL_VECTOR, npc.FindAttachment("eyes"), PATTACH_POINT_FOLLOW, true);
 		}
 	}
@@ -497,14 +524,14 @@ public void RaidbossBladedance_NPCDeath(int entity)
 	
 	if(i_RaidGrantExtra[npc.index] == 1 && GameRules_GetRoundState() == RoundState_ZombieRiot)
 	{
-		CPrintToChatAll("{crimson}Bladedance{default}: You and Bob the first.. you both missunderstand who the enemy is.. its {white}Whiteflower{default} you fools! He betrayed {crimson}Guln{default} aswell!");
+		CPrintToChatAll("{crimson}Bladedance{default}: You and Bob the first.. you both misunderstand who the enemy is.. its {white}Whiteflower{default} you fools! He betrayed {crimson}Guln{default} aswell!");
 		CPrintToChatAll("{crimson}Bladedance{default} escapes from you... and gains the ability to copy {crimson}you.");
 		for (int client = 1; client <= MaxClients; client++)
 		{
 			if(IsValidClient(client) && GetClientTeam(client) == 2 && TeutonType[client] != TEUTON_WAITING && PlayerPoints[client] > 500)
 			{
 				Items_GiveNamedItem(client, "Bob's true fear");
-				CPrintToChat(client,"{default}This battle wasnt something that should have happend. You had little to no chance... This is... {red}''Bob's True fear.''{default}!");
+				CPrintToChat(client,"{default}This battle wasn't something that should have happened. You had little to no chance... This is... {red}''Bob's True fear.''{default}!");
 			}
 		}
 		for(int i; i < i_MaxcountNpcTotal; i++)
@@ -519,6 +546,7 @@ public void RaidbossBladedance_NPCDeath(int entity)
 			}
 		}
 		Waves_ClearWaves();
+		ForcePlayerWin();
 	}
 	if(IsValidEntity(npc.m_iWearable1))
 		RemoveEntity(npc.m_iWearable1);
@@ -528,4 +556,19 @@ public void RaidbossBladedance_NPCDeath(int entity)
 
 	if (EntIndexToEntRef(npc.index) == RaidBossActive)
 		RaidBossActive = INVALID_ENT_REFERENCE;
+}
+
+public void Bladedance_AllySpawn(int self, int ally)
+{
+	if(GetTeam(ally) != GetTeam(self))
+	{
+		return;
+	}
+	float pos[3]; GetEntPropVector(self, Prop_Data, "m_vecAbsOrigin", pos);
+	pos[2] += 5.0;
+	float vAngles[3];								
+	GetEntPropVector(self, Prop_Data, "m_angRotation", vAngles); 
+	TeleportEntity(ally, pos, vAngles, NULL_VECTOR);
+	ApplyStatusEffect(ally, ally, "Godly Motivation", 5.0);
+	ApplyStatusEffect(ally, ally, "Infinite Will", 5.0);
 }

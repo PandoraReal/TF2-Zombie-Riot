@@ -304,10 +304,14 @@ methodmap Twirl < CClotBody
 
 		float Sky_Loc[3]; Sky_Loc = Predicted_Pos; Sky_Loc[2]+=500.0; Predicted_Pos[2]-=100.0;
 
-		int laser;
-		laser = ConnectWithBeam(-1, -1, color[0], color[1], color[2], 4.0, 4.0, 5.0, BEAM_COMBINE_BLACK, Predicted_Pos, Sky_Loc);
-		if(IsValidEntity(laser))
-			CreateTimer(0.5, Timer_RemoveEntity, EntIndexToEntRef(laser), TIMER_FLAG_NO_MAPCHANGE);
+		if(!AtEdictLimit(EDICT_NPC))
+		{
+			int laser;
+			laser = ConnectWithBeam(-1, -1, color[0], color[1], color[2], 4.0, 4.0, 5.0, BEAM_COMBINE_BLACK, Predicted_Pos, Sky_Loc);
+			if(IsValidEntity(laser))
+				CreateTimer(0.5, Timer_RemoveEntity, EntIndexToEntRef(laser), TIMER_FLAG_NO_MAPCHANGE);
+		}
+		
 			
 		int loop_for = 4;
 
@@ -822,8 +826,6 @@ methodmap Twirl < CClotBody
 		Zero(b_said_player_weaponline);
 		fl_said_player_weaponline_time[npc.index] = GetGameTime() + GetRandomFloat(0.0, 5.0);
 
-		c_NpcName[npc.index] = "Twirl";
-
 		b_force_transformation = false;
 
 		b_test_mode = StrContains(data, "test") != -1;
@@ -854,6 +856,7 @@ methodmap Twirl < CClotBody
 		
 		RaidBossActive = EntIndexToEntRef(npc.index);
 		RaidAllowsBuildings = false;
+		RaidAllowLastman = true;
 	
 		fl_next_textline = 0.0;
 		for(int client_check=1; client_check<=MaxClients; client_check++)
@@ -998,10 +1001,7 @@ methodmap Twirl < CClotBody
 		if(b_tripple_raid)
 		{
 			WaveStart_SubWaveStart(GetGameTime() + 700.0);	//due to lots and lots of time
-			Twirl_Lines(npc, "Oh my, looks like the expidonsans went easy on you, we sure wont my dears. Us ruanians work differently~");
-			Twirl_Lines(npc, "... Except Karlas but shhhh!");
-			CPrintToChatAll("{crimson}Karlas{snow}: .....");
-			CPrintToChatAll("{crimson}Karlas{snow}: :(");
+			CreateTimer(0.0, Timer_Twirl_TripleIntro, false);
 			RaidModeTime = GetGameTime(npc.index) + 500.0;
 			GiveOneRevive(true);
 
@@ -1083,6 +1083,8 @@ methodmap Twirl < CClotBody
 				case 3: Twirl_Lines(npc, "I need to unwind, and you all look {crimson}perfect{snow} for that!");
 			}
 		}
+
+		c_NpcName[npc.index] = "Twirl";
 
 		i_current_Text = 0;
 
@@ -1169,7 +1171,7 @@ static Action Timer_Twirl_Ion(Handle Timer, DataPack data)
 	TE_SetupBeamRingPoint(end_point, 0.0, Radius*2.0, g_Ruina_BEAM_Laser, g_Ruina_HALO_Laser, 0, 1, 0.4, Thickness, 0.75, color, 1, 0);
 	TE_SendToAll();
 
-	float Sky_Loc[3]; Sky_Loc = end_point; Sky_Loc[2]+=1000.0; end_point[2]-=100.0;
+	float Sky_Loc[3]; Sky_Loc = end_point; Sky_Loc[2]+=1000.0; end_point[2]-=100.0; 
 
 	if(AtEdictLimit(EDICT_NPC))
 		return Plugin_Stop;
@@ -1808,30 +1810,34 @@ static void lunar_Radiance(Twirl npc)
 		}
 	}
 
-	float flPos[3], flAng[3];
-	npc.GetAttachment("effect_hand_r", flPos, flAng);
-	int ent1 = ParticleEffectAt_Parent(flPos, "raygun_projectile_blue_crit", npc.index, "effect_hand_r", {0.0,0.0,0.0});
-	npc.GetAttachment("effect_hand_l", flPos, flAng);
-	int ent2 = ParticleEffectAt_Parent(flPos, "raygun_projectile_red_crit", npc.index, "effect_hand_l", {0.0,0.0,0.0});
-	if(IsValidEntity(ent1) && IsValidEntity(ent2))
+	if(!AtEdictLimit(EDICT_NPC))
 	{
-		i_lunar_entities[npc.index][0] = EntIndexToEntRef(ent1);
-		i_lunar_entities[npc.index][1] = EntIndexToEntRef(ent2);
-		int color[4];
-		Ruina_Color(color, i_current_wave[npc.index]);
-		int laser = ConnectWithBeamClient(ent1, ent2, color[0], color[1], color[2], 5.0, 5.0, 1.0, LASERBEAM);
-		if(IsValidEntity(laser))
+		float flPos[3], flAng[3];
+		npc.GetAttachment("effect_hand_r", flPos, flAng);
+		int ent1 = ParticleEffectAt_Parent(flPos, "raygun_projectile_blue_crit", npc.index, "effect_hand_r", {0.0,0.0,0.0});
+		npc.GetAttachment("effect_hand_l", flPos, flAng);
+		int ent2 = ParticleEffectAt_Parent(flPos, "raygun_projectile_red_crit", npc.index, "effect_hand_l", {0.0,0.0,0.0});
+		if(IsValidEntity(ent1) && IsValidEntity(ent2))
 		{
-			i_lunar_entities[npc.index][2] = EntIndexToEntRef(laser);
+			i_lunar_entities[npc.index][0] = EntIndexToEntRef(ent1);
+			i_lunar_entities[npc.index][1] = EntIndexToEntRef(ent2);
+			int color[4];
+			Ruina_Color(color, i_current_wave[npc.index]);
+			int laser = ConnectWithBeamClient(ent1, ent2, color[0], color[1], color[2], 5.0, 5.0, 1.0, LASERBEAM);
+			if(IsValidEntity(laser))
+			{
+				i_lunar_entities[npc.index][2] = EntIndexToEntRef(laser);
+			}
+		}
+		else
+		{
+			if(IsValidEntity(ent1))
+				RemoveEntity(ent1);
+			if(IsValidEntity(ent2))
+				RemoveEntity(ent2);
 		}
 	}
-	else
-	{
-		if(IsValidEntity(ent1))
-			RemoveEntity(ent1);
-		if(IsValidEntity(ent2))
-			RemoveEntity(ent2);
-	}
+	
 
 	npc.m_flLunarThrottle = GameTime + 0.5;
 	fl_ruina_battery_timeout[npc.index] = GameTime + 2.5;
@@ -2876,12 +2882,19 @@ static void Fractal_Attack(int iNPC, float VecTarget[3], float dmg, float speed,
 		int color[4];
 		Ruina_Color(color, i_current_wave[iNPC]);
 		Twirl npc = view_as<Twirl>(iNPC);
-		int beam = ConnectWithBeamClient(npc.m_iWearable1, Proj, color[0], color[1], color[2], f_start, f_end, amp, LASERBEAM);
-		i_WandParticle[Proj] = EntIndexToEntRef(beam);
 		DataPack pack;
 		CreateDataTimer(0.1, Laser_Projectile_Timer, pack, TIMER_FLAG_NO_MAPCHANGE|TIMER_REPEAT);
 		pack.WriteCell(EntIndexToEntRef(iNPC));
-		pack.WriteCell(EntIndexToEntRef(beam));
+		if(!AtEdictLimit(EDICT_NPC))
+		{
+			int beam = ConnectWithBeamClient(npc.m_iWearable1, Proj, color[0], color[1], color[2], f_start, f_end, amp, LASERBEAM);
+			i_WandParticle[Proj] = EntIndexToEntRef(beam);
+			pack.WriteCell(EntIndexToEntRef(beam));
+		}
+		else
+		{
+			pack.WriteCell(-69);
+		}
 		pack.WriteCell(EntIndexToEntRef(Proj));
 		pack.WriteCellArray(color, sizeof(color));
 		pack.WriteFloat(radius);
@@ -2931,14 +2944,18 @@ static Action Laser_Projectile_Timer(Handle timer, DataPack data)
 {
 	data.Reset();
 	int iNPC = EntRefToEntIndex(data.ReadCell());
-	int Laser_Entity = EntRefToEntIndex(data.ReadCell());
+	int Laser_Entity = data.ReadCell();
+
+	if(Laser_Entity != -69)
+		Laser_Entity = EntRefToEntIndex(Laser_Entity);
+
 	int Projectile = EntRefToEntIndex(data.ReadCell());
 	int color[4];
 	data.ReadCellArray(color, sizeof(color));
 	float Radius	= data.ReadFloat();
 	float dmg 		= data.ReadFloat();
 
-	if(!IsValidEntity(iNPC) || !IsValidEntity(Laser_Entity) || !IsValidEntity(Projectile))
+	if(!IsValidEntity(iNPC) || (!IsValidEntity(Laser_Entity) && Laser_Entity != -69) || !IsValidEntity(Projectile))
 	{
 		if(IsValidEntity(Laser_Entity))
 			RemoveEntity(Laser_Entity);
@@ -2948,6 +2965,8 @@ static Action Laser_Projectile_Timer(Handle timer, DataPack data)
 		
 		return Plugin_Stop;
 	}
+
+	
 
 	Ruina_Laser_Logic Laser;
 
@@ -2970,6 +2989,12 @@ static Action Laser_Projectile_Timer(Handle timer, DataPack data)
 	Laser.Bonus_Damage = dmg*6.0;
 	Laser.damagetype = DMG_PLASMA;
 
+
+	if(Laser_Entity == -69)	//The projectile was fired when we are at edict criticality, as such we will render the "laser" with a TE rather then env beam.
+	{
+		TE_SetupBeamPoints(Laser.Start_Point, Laser.End_Point, g_Ruina_BEAM_Laser, 0, 0, 0, 0.1, Radius*2.0, Radius*2.0, 0, 0.1, color, 3);
+		TE_SendToAll();
+	}
 	Laser.Deal_Damage(On_LaserHit);
 
 
@@ -4317,7 +4342,7 @@ static void Twirl_Ruina_Weapon_Lines(Twirl npc, int client)
 		case 9:/*9 is passenger*/ switch(GetRandomInt(0,1)) 		{case 0: Format(Text_Lines, sizeof(Text_Lines), "I'll be frank {gold}%N{snow}, even though that wand looks like one of ours, it ain't", client); 		case 1: Format(Text_Lines, sizeof(Text_Lines), "I'm somewhat ashamed to admit that the wand you're using {gold}%N{snow}, wasn't made by us, which is frankly a shock considering it has all the characteristics of our wands", client);}
 		case WEAPON_RUINA_DRONE_KNIFE: switch(GetRandomInt(0,2)) 	{case 0: Format(Text_Lines, sizeof(Text_Lines), "NICE KNIFE {gold}%N{snow}.", client); 																	case 1: Format(Text_Lines, sizeof(Text_Lines), "It's british shanking time {gold}%N{snow}!", client); case 2: Format(Text_Lines, sizeof(Text_Lines), "OI, {gold}%N{snow} YOU GOT A LOISCENCE FOR THAT KNOIFE?", client);}
 		case WEAPON_SIGIL_BLADE: switch(GetRandomInt(0,2)) 			{case 0: Format(Text_Lines, sizeof(Text_Lines), "Huh, how did you {gold}%N{snow} manage to turn that worthless thing into a somwhat competent weapon?", client); case 1: Format(Text_Lines, sizeof(Text_Lines), "Wait, isn't that Shard from my Airships's fog-lamps? How, where did you {gold}%N{snow} find that?", client); case 2: Format(Text_Lines, sizeof(Text_Lines), "I applaude you {gold}%N{snow} for turning that \"thing\" into a weapon", client);}
-		case WEAPON_IRENE: switch(GetRandomInt(0,1)) 				{case 0: Format(Text_Lines, sizeof(Text_Lines), "Oh, so you know Irene {gold}%N{snow}? Do you perchance have a picture of her...?", client); 			case 1: Format(Text_Lines, sizeof(Text_Lines), "Such an interesting weapon, say {gold}%N{snow} Where did you get that from?", client);}
+		case WEAPON_AMPHI: switch(GetRandomInt(0,1)) 				{case 0: Format(Text_Lines, sizeof(Text_Lines), "Oh, so you know Amphi {gold}%N{snow}? Do you perchance have a picture of her...?", client); 			case 1: Format(Text_Lines, sizeof(Text_Lines), "Such an interesting weapon, say {gold}%N{snow} Where did you get that from?", client);}
 		case WEAPON_RAIGEKI: switch(GetRandomInt(0,1)) 				{case 0: Format(Text_Lines, sizeof(Text_Lines), "ITS TIME TO, DU-DU-DU-DU-DUEL {gold}%N{snow}!", client); 												case 1: Format(Text_Lines, sizeof(Text_Lines), "I use pot of greed {gold}%N{snow}.", client);}
 		case WEAPON_CHEMICAL_THROWER: switch(GetRandomInt(0,1)) 	{case 0: Format(Text_Lines, sizeof(Text_Lines), "I'm not quite fond of {gold}%N{snow} using chemical warfare, quite barbaric if I'm being honest", client); case 1: Format(Text_Lines, sizeof(Text_Lines), "Spread the chemicals {gold}%N{snow}, spread the that which will burn the world to nothing but pools of acid!", client);}
 		case WEAPON_KIT_PROTOTYPE, WEAPON_KIT_PROTOTYPE_MELEE: switch(GetRandomInt(0,1)) 	{case 0: Format(Text_Lines, sizeof(Text_Lines), "uhhh, shouldn't you {gold}%N{snow}, be on my side? or did {gold}Expidonsa{snow} finally have enough of my \"Twirly Antics\"?", client); case 1: Format(Text_Lines, sizeof(Text_Lines), "{gold}%N{snow} has just gotta be a broken unit, hope {gold}Expidonsa{snow} won't mind too bad if I bust it up before they get a chance to recover it...", client);}
@@ -4544,13 +4569,7 @@ static void Twirl_Lines(Twirl npc, const char[] text)
 	if(b_test_mode)
 		return;
 
-	for(int i=1 ; i <= MaxClients ; i++)	//should fix translations being buggy with the name.
-	{
-		if(IsValidClient(i) && IsClientInGame(i))
-		{
-			CPrintToChat(i, "%s %s", npc.GetName(), text);
-		}
-	}
+	PrintNPCMessageWithPrefixes(npc.index, NameColour, text, .messageColor = TextColour);
 }
 static float[] GetNPCAngles(CClotBody npc)
 {
@@ -4814,4 +4833,30 @@ void TwirlEarsApply(int iNpc, char[] attachment = "head", float size = 1.0)
 	i_ExpidonsaEnergyEffect[iNpc][8] = EntIndexToEntRef(particle_ears4_r);
 	i_ExpidonsaEnergyEffect[iNpc][9] = EntIndexToEntRef(Laser_ears_1_r);
 	i_ExpidonsaEnergyEffect[iNpc][10] = EntIndexToEntRef(Laser_ears_2_r);
+}
+
+static void Timer_Twirl_TripleIntro(Handle timer, bool shouldKarlasChat)
+{
+	int raids[3];
+	raids = i_GetAllPartiesInvolved();
+	
+	if (!shouldKarlasChat && raids[0] != 0)
+	{
+		// Twirl's turn
+		Twirl npc = view_as<Twirl>(raids[0]);
+		
+		Twirl_Lines(npc, "Oh my, looks like the expidonsans went easy on you, we sure wont my dears. Us ruanians work differently~");
+		Twirl_Lines(npc, "... Except Karlas but shhhh!");
+		
+		// We have to wait for Karlas to spawn...
+		CreateTimer(1.0, Timer_Twirl_TripleIntro, true, TIMER_FLAG_NO_MAPCHANGE);
+	}
+	else if (shouldKarlasChat && raids[2] != 0)
+	{
+		// Karlas' turn
+		Karlas allyNpc = view_as<Karlas>(raids[2]);
+		
+		Karlas_Lines(allyNpc, ".....");
+		Karlas_Lines(allyNpc, ":(");			
+	}
 }

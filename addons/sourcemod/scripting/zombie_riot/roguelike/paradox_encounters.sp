@@ -7,7 +7,6 @@
 
 static void GiveCash(int cash)
 {
-	CurrentCash += cash;
 	GlobalExtraCash += cash;
 	CPrintToChatAll("{green}%t", "Cash Gained!", cash);
 }
@@ -746,7 +745,7 @@ public void Rogue_Vote_FortituousOpportunity(const Vote vote, int index)
 	if(StrEqual(vote.Config, "Unauthorized Ruina Gem"))
 	{
 		CPrintToChatAll("{purple}Twirl{snow}: ........................... So you all are traitors. Go to hell.");
-		CPrintToChatAll("{crimson}Twirl leaves you alone in the desert, bob the second also leaves you... Uh... did you think this one through?");
+		CPrintToChatAll("{crimson}Twirl leaves you alone in the desert, Bob the Second also leaves you... Uh... did you think this one through?");
 		ForcePlayerLoss();
 		//If mercs give it away, you just auto loose.
 	}

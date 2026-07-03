@@ -106,7 +106,7 @@ void CHIMERA_OnMapStart_NPC()
 	NPCData data;
 	strcopy(data.Name, sizeof(data.Name), "C.H.I.M.E.R.A.");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_chimera");
-	strcopy(data.Icon, sizeof(data.Icon), "chimera");
+	strcopy(data.Icon, sizeof(data.Icon), "chimera_new");
 	data.IconCustom = true;
 	data.Flags = MVM_CLASS_FLAG_MINIBOSS|MVM_CLASS_FLAG_ALWAYSCRIT;
 	data.Category = Type_Aperture;
@@ -339,6 +339,7 @@ methodmap CHIMERA < CClotBody
 		
 		RaidBossActive = EntIndexToEntRef(npc.index);
 		RaidAllowsBuildings = false;
+		RaidAllowLastman = true;
 
 		npc.SetActivity("ACT_MP_RUN_MELEE");
 
@@ -417,7 +418,7 @@ methodmap CHIMERA < CClotBody
 		music.Volume = 0.7;
 		music.Custom = true;
 		strcopy(music.Name, sizeof(music.Name), "Citadel's End");
-		strcopy(music.Artist, sizeof(music.Artist), "Serious Sam : Siberian Mayhem");
+		strcopy(music.Artist, sizeof(music.Artist), "Serious Sam : siberian Mayhem");
 		Music_SetRaidMusic(music);
 		
 		npc.m_flNextMeleeAttack = 0.0;
@@ -439,11 +440,11 @@ methodmap CHIMERA < CClotBody
 		switch(GetRandomInt(0,2))
 		{
 			case 0:
-				CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: WELCOME, WELCOME SINNERS!");
+				NPCTalkMessage(npc.index, "WELCOME, WELCOME SINNERS!");
 			case 1:
-				CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: LET'S BEGIN");
+				NPCTalkMessage(npc.index, "LET'S BEGIN");
 			case 2:
-				CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: ENGAGING THE TARGETS");
+				NPCTalkMessage(npc.index, "ENGAGING THE TARGETS");
 		}
 
 		npc.m_iWearable1 = npc.EquipItem("head", "models/workshop/player/items/medic/tw_medibot_chariot/tw_medibot_chariot.mdl", _, skin);
@@ -472,6 +473,11 @@ methodmap CHIMERA < CClotBody
 		
 		return npc;
 	}
+}
+
+static void NPCTalkMessage(int entity, const char[] message)
+{
+	PrintNPCMessageWithPrefixes(entity, "darkblue", message);
 }
 
 public void CHIMERA_ClotThink(int iNPC)
@@ -675,6 +681,8 @@ public Action CHIMERA_OnTakeDamage(int victim, int &attacker, int &inflictor, fl
 			npc.m_flRangedArmor = 1.0;
 			npc.m_flMeleeArmor = 1.0;
 			Aperture_Shared_LastStandSequence_Starting(view_as<CClotBody>(npc));
+			
+			npc.m_iDeathState = 1;
 		}
 		else if (!npc.m_flDeathAnim)
 		{
@@ -714,7 +722,7 @@ public Action CHIMERA_OnTakeDamage(int victim, int &attacker, int &inflictor, fl
 		if((ReturnEntityMaxHealth(npc.index) / 2) >= (GetEntProp(npc.index, Prop_Data, "m_iHealth") - RoundToNearest(damage)))
 		{
 			npc.PlayAdaptStart();
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: TOO MUCH DAMAGE SUSTAINED, INITIATING {crimson}[DAMAGE ADAPTABILITY MODE]");
+			NPCTalkMessage(npc.index, "TOO MUCH DAMAGE SUSTAINED, INITIATING {crimson}[DAMAGE ADAPTABILITY MODE]");
 			float VecSelfNpcabs[3]; GetEntPropVector(npc.index, Prop_Data, "m_vecAbsOrigin", VecSelfNpcabs);
 			TE_Particle("teleported_mvm_bot", VecSelfNpcabs, _, _, npc.index, 1, 0);
 			npc.Anger = true;
@@ -765,6 +773,18 @@ void CHIMERA_CleanUp(int iNPC)
 	npc.StopPassiveSound();
 	npc.StopStunSound(true);
 	ClearCustomFog(FogType_NPC);
+	
+	int a, entity1;
+	// Clear all lingering NPCs
+	while((entity1 = FindEntityByNPC(a)) != -1)
+	{
+		if(IsValidEntity(entity1) && i_NpcInternalId[entity1] == CHIMERARefragmentedFrostHunter_ID() || i_NpcInternalId[entity1] == CHIMERARefragmentedWinterSniper_ID())
+		{
+			b_DissapearOnDeath[entity1] = true;
+			b_DoGibThisNpc[entity1] = true;
+			SmiteNpcToDeath(entity1);
+		}
+	}
 }
 
 bool CHIMERA_timeBased(int iNPC)
@@ -787,13 +807,13 @@ bool CHIMERA_timeBased(int iNPC)
 			//do both abilities twice.
 			if(npc.m_flDamageCharge < 0.0)
 			{
-				CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: ADAPTING COMPLETED, {crimson}RANGED{default} IS CONSIDERED THE MOST DANGEROUS.");
+				NPCTalkMessage(npc.index, "ADAPTING COMPLETED, {crimson}RANGED{default} IS CONSIDERED THE MOST DANGEROUS.");
 				npc.m_flRangedArmor = 0.75;
 				npc.m_flMeleeArmor = 1.35;
 			}
 			else
 			{
-				CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: ADAPTING COMPLETED, {crimson}MELEE{default} IS CONSIDERED THE MOST DANGEROUS.");
+				NPCTalkMessage(npc.index, "ADAPTING COMPLETED, {crimson}MELEE{default} IS CONSIDERED THE MOST DANGEROUS.");
 				npc.m_flRangedArmor = 1.35;
 				npc.m_flMeleeArmor = 0.75;
 			}
@@ -870,13 +890,13 @@ bool CHIMERA_LoseConditions(int iNPC)
 				switch (GetURandomInt() % 4)
 				{
 					case 0:
-						CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: IT RECOILS IN PAIN?");
+						NPCTalkMessage(npc.index, "IT RECOILS IN PAIN?");
 					case 1:
-						CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: I NEED A DISTRACTION. ERROR? ERROR? ERROR?");
+						NPCTalkMessage(npc.index, "I NEED A DISTRACTION. ERROR? ERROR? ERROR?");
 					case 2:
-						CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: THIS PLACE IS TOO HOT FOR ME.");
+						NPCTalkMessage(npc.index, "THIS PLACE IS TOO HOT FOR ME.");
 					case 3:
-						CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: I MIGHT NOT BE WELCOME HERE?");
+						NPCTalkMessage(npc.index, "I MIGHT NOT BE WELCOME HERE?");
 				}
 			}
 			
@@ -900,14 +920,14 @@ bool CHIMERA_LoseConditions(int iNPC)
 	{
 		func_NPCThink[npc.index] = INVALID_FUNCTION;
 		
-		CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: ZIBERIA WOULD BE PROUD, PROVIDED THEY WERE TO SEE ME NOW.");
+		NPCTalkMessage(npc.index, "ZIBERIA WOULD BE PROUD, PROVIDED THEY WERE TO SEE ME NOW.");
 		return true;
 	}
 	if(IsValidEntity(RaidBossActive) && RaidModeTime < GetGameTime())
 	{
 		ForcePlayerLoss();
 		RaidBossActive = INVALID_ENT_REFERENCE;
-		CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: TIME TO CHOOSE. LIFE, OR DEATH?");
+		NPCTalkMessage(npc.index, "TIME TO CHOOSE. LIFE, OR DEATH?");
 		func_NPCThink[npc.index] = INVALID_FUNCTION;
 		return true;
 	}
@@ -1002,15 +1022,15 @@ bool CHIMERA_RefractedSniper(int iNPC)
 	switch(GetRandomInt(0,4))
 	{
 		case 0:
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: BREWING UP A STORM");
+			NPCTalkMessage(npc.index, "BREWING UP A STORM");
 		case 1:
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: KEEP RUNNING, THAT'LL HELP");
+			NPCTalkMessage(npc.index, "KEEP RUNNING, THAT'LL HELP");
 		case 2:
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: LET'S COOL THINGS DOWN");
+			NPCTalkMessage(npc.index, "LET'S COOL THINGS DOWN");
 		case 3:
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: FOOLISH MORTALS, YOU THINK YOU CAN STOP ME?");
+			NPCTalkMessage(npc.index, "FOOLISH MORTALS, YOU THINK YOU CAN STOP ME?");
 		case 4:
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: DIE ALREADY, I'M GIVING IT ALL ALREADY!");
+			NPCTalkMessage(npc.index, "DIE ALREADY, I'M GIVING IT ALL ALREADY!");
 	}
 	if(npc.m_flSpawnSnipers == 1.0)
 		npc.m_flSpawnSnipers = GetGameTime(npc.index) + 10.0;
@@ -1029,15 +1049,15 @@ bool CHIMERA_RefractSpawners(int iNPC)
 	switch(GetRandomInt(0,3))
 	{
 		case 0:
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: LOOK OUT, I'M RIGHT BEHIND YOU");
+			NPCTalkMessage(npc.index, "LOOK OUT, I'M RIGHT BEHIND YOU");
 		case 1:
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: YOU STOP RUNNING AND I'LL STOP FIRING, THAT SEEMS FAIR");
+			NPCTalkMessage(npc.index, "YOU STOP RUNNING AND I'LL STOP FIRING, THAT SEEMS FAIR");
 		case 2:
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: THIS WOULD GO A LOT FASTER IF YOU'D STAY STILL");
+			NPCTalkMessage(npc.index, "THIS WOULD GO A LOT FASTER IF YOU'D STAY STILL");
 		case 3:
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: DON'T RUN! DON'T RUN!");
+			NPCTalkMessage(npc.index, "DON'T RUN! DON'T RUN!");
 		case 4:
-			CPrintToChatAll("{darkblue}C.H.I.M.E.R.A.{default}: YOU'RE JUST DELAYING THE INEVITABLE");
+			NPCTalkMessage(npc.index, "YOU'RE JUST DELAYING THE INEVITABLE");
 
 	}
 	npc.PlayRefractedAbilityBall();
@@ -1190,6 +1210,10 @@ public Action Timer_CHIMERAMineLogic(Handle timer, DataPack pack)
 
 float CHIMERAMineExploder(int entity, int victim, float damage, int weapon)
 {
+	CHIMERA npc = view_as<CHIMERA>(entity);
+	if (npc.m_iDeathState)
+		return 0.0;
+	
 	DetonateCurrentMine = true;
 	
 	char buffers[64];

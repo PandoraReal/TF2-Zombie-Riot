@@ -154,6 +154,7 @@ methodmap ApertureResearcher < CClotBody
 			RaidModeTime = GetGameTime(npc.index) + 9000.0;
 			RaidModeScaling = 0.0;
 			RaidAllowsBuildings = true;
+			RaidAllowLastman = false;
 		}
 				
 		int skin = 1;
@@ -176,7 +177,7 @@ methodmap ApertureResearcher < CClotBody
 
 		if(ally == TFTeam_Blue)
 		{
-			CPrintToChatAll("{normal}Researcher{default}: 𝙹ᓵ⍑ リ╎ᓵ⍑ℸ ̣ ↸╎ᒷᓭᒷ ᒷꖌᒷꖎ⍑ᔑ⎓ℸ ̣ᒷリ ꖌ∷ᒷᔑℸ ̣⚍∷ᒷリ!!!");
+			NPCTalkMessage(npc.index, "𝙹ᓵ⍑ リ╎ᓵ⍑ℸ ̣ ↸╎ᒷᓭᒷ ᒷꖌᒷꖎ⍑ᔑ⎓ℸ ̣ᒷリ ꖌ∷ᒷᔑℸ ̣⚍∷ᒷリ!!!");
 		}
 		else
 		{
@@ -184,15 +185,15 @@ methodmap ApertureResearcher < CClotBody
 			{
 				case 0:
 				{
-					CPrintToChatAll("{normal}Researcher{default}: I really didn't want to end up in here!");
+					NPCTalkMessage(npc.index, "I really didn't want to end up in here!");
 				}
 				case 1:
 				{
-					CPrintToChatAll("{normal}Researcher{default}: Why here?! Couldn't it have been any other place on this planet?!");
+					NPCTalkMessage(npc.index, "Why here?! Couldn't it have been any other place on this planet?!");
 				}
 				case 2:
 				{
-					CPrintToChatAll("{normal}Researcher{default}: Please don't harm me, I-...");
+					NPCTalkMessage(npc.index, "Please don't harm me, I-...");
 				}
 			}
 		}
@@ -201,6 +202,11 @@ methodmap ApertureResearcher < CClotBody
 		
 		return npc;
 	}
+}
+
+static void NPCTalkMessage(int entity, const char[] message)
+{
+	PrintNPCMessageWithPrefixes(entity, "normal", message);
 }
 
 public void ApertureResearcher_ClotThink(int iNPC)
@@ -232,6 +238,18 @@ public void ApertureResearcher_ClotThink(int iNPC)
 		npc.m_flGetClosestTargetTime = GetGameTime(npc.index) + GetRandomRetargetTime();
 	}
 
+	if(npc.Anger)
+	{
+		for(int entitycount; entitycount<MAXENTITIES; entitycount++) //Check for npcs
+		{
+			if(IsValidEnemy(npc.index, entitycount))
+				ApplyStatusEffect(npc.index, entitycount, "Kinetic Surge", 20.0);
+			else if(IsValidAlly(npc.index, entitycount))
+				ApplyStatusEffect(npc.index, entitycount, "Kinetic Surge", 20.0);
+		}
+		ApplyStatusEffect(npc.index, npc.index, "Kinetic Surge", 20.0);
+	}
+
 	//Too lazy to implemt atm
 	/*
 	//Check if allies dead for text
@@ -243,15 +261,15 @@ public void ApertureResearcher_ClotThink(int iNPC)
 			{
 				case 0:
 				{
-					CPrintToChatAll("{normal}Researcher{default}: Well, given your history, I wasn't expecting you to be so helpful! I'm out of here!");
+					NPCTalkMessage(npc.index, "Well, given your history, I wasn't expecting you to be so helpful! I'm out of here!");
 				}
 				case 1:
 				{
-					CPrintToChatAll("{normal}Researcher{default}: Your contributions to Expidonsa will not go unnoticed! I'm out!");
+					NPCTalkMessage(npc.index, "Your contributions to Expidonsa will not go unnoticed! I'm out!");
 				}
 				case 2:
 				{
-					CPrintToChatAll("{normal}Researcher{default}: That was a close call, thanks for staying neutral! Teleporter, start!");
+					NPCTalkMessage(npc.index, "That was a close call, thanks for staying neutral! Teleporter, start!");
 				}
 			}
 		}
@@ -299,6 +317,7 @@ public Action ApertureResearcher_OnTakeDamage(int victim, int &attacker, int &in
 	}
 	if((ReturnEntityMaxHealth(npc.index)/2) >= GetEntProp(npc.index, Prop_Data, "m_iHealth")) 
 	{
+		npc.Anger = true;
 		for(int entitycount; entitycount<MAXENTITIES; entitycount++) //Check for npcs
 		{
 			if(IsValidEnemy(npc.index, entitycount))
@@ -335,7 +354,7 @@ public void ApertureResearcher_NPCDeath(int entity)
 
 	if(GetTeam(npc.index) == TFTeam_Blue)
 	{
-		CPrintToChatAll("{normal}Researcher{default}: ⍊ᒷ∷↸ᔑᒲᒲℸ ̣, ↸╎ᒷ ⍑ᔑʖᒷリ ↸𝙹ᓵ⍑ ᓭᓵ⍑𝙹リ ∴ᔑᓭ ↸∷ᔑ⚍⎓!");
+		NPCTalkMessage(npc.index, "⍊ᒷ∷↸ᔑᒲᒲℸ ̣, ↸╎ᒷ ⍑ᔑʖᒷリ ↸𝙹ᓵ⍑ ᓭᓵ⍑𝙹リ ∴ᔑᓭ ↸∷ᔑ⚍⎓!");
 	}
 	else
 	{
@@ -343,15 +362,15 @@ public void ApertureResearcher_NPCDeath(int entity)
 		{
 			case 0:
 			{
-				CPrintToChatAll("{normal}Researcher{default}: I'm out of here!");
+				NPCTalkMessage(npc.index, "I'm out of here!");
 			}
 			case 1:
 			{
-				CPrintToChatAll("{normal}Researcher{default}: Teleporter reconfigured, see you in never!");
+				NPCTalkMessage(npc.index, "Teleporter reconfigured, see you in never!");
 			}
 			case 2:
 			{
-				CPrintToChatAll("{normal}Researcher{default}: Start the machine, start the machine!");
+				NPCTalkMessage(npc.index, "Start the machine, start the machine!");
 			}
 		}	
 	}
